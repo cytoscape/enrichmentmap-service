@@ -10,5 +10,5 @@ mvn clean package
 
 ```
 docker build -t enrichmentmap-service .
-docker run --rm -it enrichmentmap-service:latest
+docker run --rm -p 8080:8080 -it enrichmentmap-service:latest
 ```
