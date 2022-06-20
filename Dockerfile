@@ -26,11 +26,9 @@ ENV PATH $M2:$PATH
 # Build the project
 WORKDIR /home/app
 
-COPY mvnw .
-COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
-RUN ./mvnw install -DskipTests
+RUN mvn clean package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 # ===[ Package Stage ]==================================================================================================
