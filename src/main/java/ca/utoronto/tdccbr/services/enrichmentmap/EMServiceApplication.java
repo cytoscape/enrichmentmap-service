@@ -13,5 +13,4 @@ public class EMServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EMServiceApplication.class, args);
 	}
-
 }

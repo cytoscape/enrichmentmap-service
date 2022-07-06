@@ -2,6 +2,7 @@ package ca.utoronto.tdccbr.services.enrichmentmap.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,12 +63,22 @@ public class EMServiceTests {
         dsParams = new DataSetParametersDTO(FGSEA_FILENAME, fgseaResults);
         reqDTO = new RequestDTO(new EMCreationParametersDTO(), Collections.singletonList(dsParams));
     }
+	
+	@Test
+    public void testPing() throws Exception {
+		var mvcRes = mockMvc.perform(get("/ping"))
+				.andExpect(status().isOk())
+                .andReturn();
+		
+		var s = mvcRes.getResponse().getContentAsString();
+		assertEquals("OK", s);
+	}
 
 	@Test
     public void testCreateEMNetwork() throws Exception {
 		var reqJson = reqDTOJsonTester.write(reqDTO).getJson();
 		
-		var mvcRes = mockMvc.perform(post("/networks")
+		var mvcRes = mockMvc.perform(post("/v1")
                 .content(reqJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -75,12 +86,6 @@ public class EMServiceTests {
                 .andReturn();
 
 		var s = mvcRes.getResponse().getContentAsString();
-		assertNotNull(s);
-		
-		System.out.println("\n==== DONE =====");
-		System.out.println(s);
-		System.out.println("===============\n");
-		
 		var res = objectMapper.readValue(s, ResultDTO.class);
 		
 		// Check the Response
