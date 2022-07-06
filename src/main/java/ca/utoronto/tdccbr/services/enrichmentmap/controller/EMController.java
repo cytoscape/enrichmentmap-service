@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.RequestDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.ResultDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.service.EMService;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/")
@@ -33,16 +34,6 @@ public class EMController {
 	}
 	
 	/**
-     * Redirects the index to the Swagger UI.
-     */
-	@GetMapping("/")
-    public String index(HttpServletResponse resp) throws Exception {
-    	resp.sendRedirect("/swagger-ui/index.html");
-        
-    	return null;
-    }
-	
-	/**
 	 * This endpoint can be used for monitoring.
 	 * If the service is running, the response is an HTTP status code of 200 and a simple "OK" text.
 	 */
@@ -50,4 +41,15 @@ public class EMController {
 	public String ping() {
 		return "OK";
 	}
+	
+	/**
+     * Redirects the root URL to the Swagger UI.
+     */
+	@ApiIgnore
+	@GetMapping("/")
+    public String index(HttpServletResponse resp) throws Exception {
+    	resp.sendRedirect("/swagger-ui/index.html");
+        
+    	return null;
+    }
 }
