@@ -1,7 +1,5 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.dto;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EdgeDataDTO {
@@ -11,7 +9,7 @@ public class EdgeDataDTO {
 	private String target;
 	private double similarityCoefficient;
 	private int overlapSize;
-	private List<String> overlapGenes;
+//	private List<String> overlapGenes;
 
 	public EdgeDataDTO() {
 		// We need this zero-argument constructor because of the JavaBean standard...
@@ -69,14 +67,14 @@ public class EdgeDataDTO {
 		this.overlapSize = overlapSize;
 	}
 
-	@JsonProperty("overlap_genes")
-	public List<String> getOverlapGenes() {
-		return overlapGenes;
-	}
-
-	public void setOverlapGenes(List<String> overlapGenes) {
-		this.overlapGenes = overlapGenes;
-	}
+//	@JsonProperty("overlap_genes")
+//	public List<String> getOverlapGenes() {
+//		return overlapGenes;
+//	}
+//
+//	public void setOverlapGenes(List<String> overlapGenes) {
+//		this.overlapGenes = overlapGenes;
+//	}
 
 	@Override
 	public String toString() {

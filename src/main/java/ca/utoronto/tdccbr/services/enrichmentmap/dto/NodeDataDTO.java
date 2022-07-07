@@ -1,7 +1,5 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.dto;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NodeDataDTO {
@@ -9,7 +7,7 @@ public class NodeDataDTO {
 	private String id;
 	private String name;
 	private String gsType;
-	private List<String> genes;
+//	private List<String> genes;
 	private int gsSize;
 	private double pvalue;
 	private double fdrQvalue;
@@ -51,13 +49,13 @@ public class NodeDataDTO {
 		this.gsType = gsType;
 	}
 
-	public List<String> getGenes() {
-		return genes;
-	}
-
-	public void setGenes(List<String> genes) {
-		this.genes = genes;
-	}
+//	public List<String> getGenes() {
+//		return genes;
+//	}
+//
+//	public void setGenes(List<String> genes) {
+//		this.genes = genes;
+//	}
 
 	@JsonProperty("gs_size")
 	public int getGsSize() {
