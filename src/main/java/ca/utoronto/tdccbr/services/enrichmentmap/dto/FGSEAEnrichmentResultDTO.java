@@ -1,6 +1,5 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.dto;
 
-import java.util.List;
 import java.util.Objects;
 
 public class FGSEAEnrichmentResultDTO {
@@ -10,8 +9,6 @@ public class FGSEAEnrichmentResultDTO {
 	private double pval = 1.0;
 	private double ES;
 	private double NES = 1.0;
-	private List<String> leadingEdge;
-	private List<String> genes;
 	
 	public FGSEAEnrichmentResultDTO() {
 		// Zero-argument constructor for the JavaBean standard...
@@ -22,17 +19,13 @@ public class FGSEAEnrichmentResultDTO {
 			int size,
 			double pval,
 			double es,
-			double nes,
-			List<String> leadingEdge,
-			List<String> genes
+			double nes
 	) {
 		this.pathway = pathway;
 		this.size = size;
 		this.pval = pval;
 		this.ES = es;
 		this.NES = nes;
-		this.leadingEdge = leadingEdge;
-		this.genes = genes;
 	}
 
 	public String getPathway() {
@@ -73,22 +66,6 @@ public class FGSEAEnrichmentResultDTO {
 
 	public void setNES(double nes) {
 		NES = nes;
-	}
-
-	public List<String> getLeadingEdge() {
-		return leadingEdge;
-	}
-
-	public void setLeadingEdge(List<String> leadingEdge) {
-		this.leadingEdge = leadingEdge;
-	}
-
-	public List<String> getGenes() {
-		return genes;
-	}
-
-	public void setGenes(List<String> genes) {
-		this.genes = genes;
 	}
 
 	@Override

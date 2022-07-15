@@ -1,17 +1,6 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.service;
 
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.EDGE_OVERLAP_GENES;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.EDGE_OVERLAP_SIZE;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.EDGE_SIMILARITY_COEFF;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NAMESPACE_PREFIX;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_COLOURING;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_FDR_QVALUE;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_GENES;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_GS_SIZE;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_GS_TYPE;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_NAME;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_NES;
-import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.NODE_PVALUE;
+import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -33,6 +22,7 @@ import ca.utoronto.tdccbr.services.enrichmentmap.model.SimilarityKey;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ComputeSimilarityTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.CreateEMNetworkTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.FilterGenesetsByDatasetGenesTask;
+import ca.utoronto.tdccbr.services.enrichmentmap.task.GMTFileReaderTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.InitializeGenesetsOfInterestTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.LoadEnrichmentsFromFGSEATask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ModelCleanupTask;
@@ -41,6 +31,7 @@ import ca.utoronto.tdccbr.services.enrichmentmap.util.Baton;
 
 @Service
 public class EMService {
+	
 
 	public ResultDTO createNetwork(RequestDTO request) {
 		var params = request.getParameters();
@@ -56,6 +47,9 @@ public class EMService {
 
 			// Create Data Set and load the enrichments from the input data
 			var ds = em.createDataSet(dsName, fgseaRes);
+			
+			tasks.add(new GMTFileReaderTask(ds, GMTFileReaderTask.DATASET_NAME_1));
+			
 			tasks.add(new LoadEnrichmentsFromFGSEATask(ds));
 		}
 		
@@ -124,7 +118,6 @@ public class EMService {
 	private static void copyAttributes(CyRow row, NodeDataDTO dto) {
 		dto.setName(NODE_NAME.get(row, NAMESPACE_PREFIX));
 		dto.setGsType(NODE_GS_TYPE.get(row, NAMESPACE_PREFIX));
-		dto.setGenes(NODE_GENES.get(row, NAMESPACE_PREFIX));
 		dto.setGsSize(NODE_GS_SIZE.get(row, NAMESPACE_PREFIX));
 		dto.setPvalue(NODE_PVALUE.get(row, NAMESPACE_PREFIX));
 		dto.setFdrQvalue(NODE_FDR_QVALUE.get(row, NAMESPACE_PREFIX));
@@ -135,7 +128,6 @@ public class EMService {
 	private static void copyAttributes(CyRow row, EdgeDataDTO dto) {
 		dto.setSimilarityCoefficient(EDGE_SIMILARITY_COEFF.get(row, NAMESPACE_PREFIX));
 		dto.setOverlapSize(EDGE_OVERLAP_SIZE.get(row, NAMESPACE_PREFIX));
-		dto.setOverlapGenes(EDGE_OVERLAP_GENES.get(row, NAMESPACE_PREFIX));
 		// NOTE: Not sending the "Data Set" attribute, because this service supports only one dataset
 	}
 }

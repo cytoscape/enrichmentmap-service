@@ -15,12 +15,12 @@ public class EMCreationParametersDTO implements EnrichmentResultFilterParams {
 	// Node filtering (gene-sets)
 	private double pvalue = 1.0;
 	private double qvalue = 0.1;
-	private boolean filterByExpressions = true;
+	private boolean filterByExpressions = false;
 	
 	// Edge filtering (similarity)
 	private SimilarityMetric similarityMetric = SimilarityMetric.COMBINED;
-	private double similarityCutoff = 0.25;
-	private double combinedConstant;
+	private double similarityCutoff = 0.375;
+	private double combinedConstant = 0.5;
 	
 	private boolean fdr;
 	
