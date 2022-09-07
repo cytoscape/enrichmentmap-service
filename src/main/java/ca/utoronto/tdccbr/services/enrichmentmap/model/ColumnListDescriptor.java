@@ -2,7 +2,8 @@ package ca.utoronto.tdccbr.services.enrichmentmap.model;
 
 import java.util.List;
 
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyTable.CyRow;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable.CyRow;
 
 /**
  * MKTODO Replace the "String suffix" parameters with "AbstractDataSet" like in ColumnDescriptor.

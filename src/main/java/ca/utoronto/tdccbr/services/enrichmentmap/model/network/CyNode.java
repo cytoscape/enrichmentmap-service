@@ -1,23 +1,18 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class CyNode {
+public class CyNode implements CyIdentifiable {
 
-	private final String id;
+	private final UUID id;
 	
 	public CyNode() {
-		this(UUID.randomUUID().toString());
+		this.id = UUID.randomUUID();
 	}
 	
-	public CyNode(String id) {
-		assert id != null;
-		
-		this.id = id;
-	}
-	
-	public String getId() {
+	@Override
+	public UUID getID() {
 		return id;
 	}
 

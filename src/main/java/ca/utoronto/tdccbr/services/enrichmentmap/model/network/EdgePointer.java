@@ -1,4 +1,6 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
+
+import java.util.UUID;
 
 /**
  * Element of the edge linked list used in {@link SimpleNetwork}.
@@ -7,7 +9,7 @@ package ca.utoronto.tdccbr.services.enrichmentmap.model;
 final class EdgePointer {
 
 	final CyEdge cyEdge;
-	final String id;
+	final UUID id;
 	final NodePointer source;
 	final NodePointer target;
 	final boolean directed;
@@ -21,7 +23,7 @@ final class EdgePointer {
 		source = s;
 		target = t;
 		cyEdge = edge;
-		id = edge.getId();
+		id = edge.getID();
 		directed = edge.isDirected();
 
 		nextOutEdge = null;

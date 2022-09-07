@@ -1,4 +1,6 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
+
+import java.util.UUID;
 
 /**
  * Element of the edge linked list used in {@link ArrayGraph}.
@@ -7,7 +9,7 @@ package ca.utoronto.tdccbr.services.enrichmentmap.model;
 final class NodePointer {
 	
 	final CyNode cyNode;
-	final String id;
+	final UUID id;
 
 	NodePointer nextNode; 
 	NodePointer prevNode;
@@ -28,7 +30,7 @@ final class NodePointer {
 
 	NodePointer(CyNode cyn) {
 		cyNode = cyn;
-		id = cyn.getId();
+		id = cyn.getID();
 
 		outDegree = 0;
 		inDegree = 0;

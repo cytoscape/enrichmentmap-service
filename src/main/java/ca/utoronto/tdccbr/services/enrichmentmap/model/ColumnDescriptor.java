@@ -1,6 +1,7 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.model;
 
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyTable.CyRow;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable.CyRow;
 
 public class ColumnDescriptor<T> extends AbstractColumnDescriptor {
 

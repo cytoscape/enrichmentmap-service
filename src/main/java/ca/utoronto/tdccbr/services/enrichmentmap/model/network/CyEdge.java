@@ -1,9 +1,9 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class CyEdge {
+public class CyEdge implements CyIdentifiable {
 
 	/**
 	 * A String column created by default for every CyEdge that
@@ -43,20 +43,16 @@ public class CyEdge {
 		ANY;
 	}
 	
-	private final String id;
+	private final UUID id;
 	private final CyNode source;
 	private final CyNode target;
 	private final boolean directed;
 	
 	public CyEdge(CyNode source, CyNode target) {
-		this(UUID.randomUUID().toString(), source, target, false);
+		this(UUID.randomUUID(), source, target, false);
 	}
 	
-	public CyEdge(String id, CyNode source, CyNode target) {
-		this(id, source, target, false);
-	}
-	
-	public CyEdge(String id, CyNode source, CyNode target, boolean directed) {
+	private CyEdge(UUID id, CyNode source, CyNode target, boolean directed) {
 		assert id != null;
 		assert source != null;
 		assert target != null;
@@ -67,7 +63,8 @@ public class CyEdge {
 		this.directed = directed;
 	}
 	
-	public String getId() {
+	@Override
+	public UUID getID() {
 		return id;
 	}
 	

@@ -1,4 +1,4 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,8 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyTable.CyRow;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable.CyRow;
 
 public class CyNetwork {
 	
@@ -22,8 +23,8 @@ public class CyNetwork {
 	public static final String EDGE_TABLE = "EDGE_TABLE";
 	public static final String TABLE_PK = "id";
 	
-	private final Map<String, NodePointer> nodePointers = new HashMap<>();
-	private final Map<String, EdgePointer> edgePointers = new HashMap<>();
+	private final Map<UUID, NodePointer> nodePointers = new HashMap<>();
+	private final Map<UUID, EdgePointer> edgePointers = new HashMap<>();
 
 	private int nodeCount;
 	private int edgeCount;
@@ -55,7 +56,7 @@ public class CyNetwork {
 		}
 	}
 
-	public CyEdge getEdge(String id) {
+	public CyEdge getEdge(UUID id) {
 		synchronized (lock) {
 			var ep = edgePointers.get(id);
 			
@@ -66,7 +67,7 @@ public class CyNetwork {
 		}
 	}
 
-	public CyNode getNode(String id) {
+	public CyNode getNode(UUID id) {
 		synchronized (lock) {
 			var np = nodePointers.get(id);
 			
@@ -104,7 +105,7 @@ public class CyNetwork {
 		
 		synchronized (lock) {
 			var np = new NodePointer(node);
-			nodePointers.put(node.getId(), np);
+			nodePointers.put(node.getID(), np);
 			nodeCount++;
 			firstNode = np.insert(firstNode);
 		}
@@ -132,7 +133,7 @@ public class CyNetwork {
 
 			ep = new EdgePointer(src, tgt, edge);
 
-			edgePointers.put(edge.getId(), ep);
+			edgePointers.put(edge.getID(), ep);
 			edgeCount++;
 		}
 
@@ -281,7 +282,7 @@ public class CyNetwork {
 				// remove adjacent edges from network
 				removeEdgesInternal(getAdjacentEdgeList(n, CyEdge.Type.ANY));
 	
-				var node = nodePointers.remove(n.getId());
+				var node = nodePointers.remove(n.getID());
 				firstNode = node.remove(firstNode);
 	
 				nodeCount--;
@@ -303,7 +304,7 @@ public class CyNetwork {
 				if (!containsEdge(edge))
 					continue;
 	
-				var e = edgePointers.remove(edge.getId());
+				var e = edgePointers.remove(edge.getID());
 	
 				e.remove();
 	
@@ -322,7 +323,7 @@ public class CyNetwork {
 		final NodePointer thisNode; 
 
 		synchronized (lock) {
-			thisNode = nodePointers.get(node.getId());
+			thisNode = nodePointers.get(node.getID());
 		}
 
 		if (thisNode == null)
@@ -338,7 +339,7 @@ public class CyNetwork {
 		final EdgePointer thisEdge; 
 
 		synchronized (lock) {
-			thisEdge = edgePointers.get(edge.getId());
+			thisEdge = edgePointers.get(edge.getID());
 		}
 
 		if (thisEdge == null)
@@ -373,14 +374,14 @@ public class CyNetwork {
 		if (node == null)
 			throw new IllegalArgumentException("'node' must not be null");
 		
-		return nodeTable.getRow(node.getId());
+		return nodeTable.getRow(node.getID());
 	}
 	
 	public CyRow getRow(CyEdge edge) {
 		if (edge == null)
 			throw new IllegalArgumentException("'edge' must not be null");
 		
-		return edgeTable.getRow(edge.getId());
+		return edgeTable.getRow(edge.getID());
 	}
 
 	private Iterator<EdgePointer> edgesAdjacent(NodePointer n, CyEdge.Type edgeType) {
@@ -425,7 +426,7 @@ public class CyNetwork {
 					while (edge == null)
 						edge = edgeLists[++edgeListIndex];
 
-					String returnId = null;
+					UUID returnId = null;
 
 					// look at outgoing edges
 					if (edgeListIndex == 0) {
@@ -491,8 +492,8 @@ public class CyNetwork {
 		assert node1 != null;
 
 		final Iterator<EdgePointer> theAdj;
-		final String nodeZero;
-		final String nodeOne;
+		final UUID nodeZero;
+		final UUID nodeOne;
 
 		// choose the smaller iterator
 		if (countEdges(node0, et) <= countEdges(node1, et)) {
@@ -506,7 +507,7 @@ public class CyNetwork {
 		}
 
 		return new Iterator<EdgePointer>() {
-				private String nextIndex;
+				private UUID nextIndex;
 
 				private void ensureComputeNext() {
 					if (nextIndex == null)
@@ -583,6 +584,6 @@ public class CyNetwork {
 	}
 
 	private NodePointer getNodePointer(CyNode node) {
-		return nodePointers.get(node.getId());
+		return nodePointers.get(node.getID());
 	}
 }

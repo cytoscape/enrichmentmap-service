@@ -1,4 +1,4 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,11 +17,11 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-public class CyTable {
+public class CyTable implements CyIdentifiable {
 
 	private final static int DEF_INIT_SIZE = 100;
 	
-	private final String id = UUID.randomUUID().toString();
+	private final UUID id = UUID.randomUUID();
 	private final String title;
 	private final String primaryKey;
 	private Class<?> primaryKeyType;
@@ -53,7 +53,8 @@ public class CyTable {
 		this.primaryKeyType = primaryKeyType;
 	}
 	
-	public String getId() {
+	@Override
+	public UUID getID() {
 		return id;
 	}
 	

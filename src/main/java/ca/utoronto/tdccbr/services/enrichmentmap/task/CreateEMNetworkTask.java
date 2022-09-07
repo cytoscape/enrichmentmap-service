@@ -11,11 +11,6 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.Columns;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyEdge;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyNetwork;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyNode;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyTable;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyTable.CyRow;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EMDataSet;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentMap;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentResult;
@@ -23,6 +18,11 @@ import ca.utoronto.tdccbr.services.enrichmentmap.model.GSEAResult;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.GenericResult;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.GenesetSimilarity;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.SimilarityKey;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyEdge;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNetwork;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable.CyRow;
 
 public class CreateEMNetworkTask implements Task {
 
@@ -110,7 +110,7 @@ public class CreateEMNetworkTask implements Task {
 			// Set attributes specific to each dataset
 			for (var ds : map.getDataSetList()) {
 				if (ds.getGeneSetsOfInterest().getGeneSets().containsKey(gsName))
-					ds.addNodeId(node.getId());
+					ds.addNodeId(node.getID());
 				
 				var enrichmentResults = ds.getEnrichments().getEnrichments();
 				var result = enrichmentResults.get(gsName);
@@ -148,7 +148,7 @@ public class CreateEMNetworkTask implements Task {
 				var ds = map.getDataSet(dsName);
 				
 				if (ds != null)
-					ds.addEdgeId(edge.getId());
+					ds.addEdgeId(edge.getID());
 			}
 			
 			var overlapGenes = 

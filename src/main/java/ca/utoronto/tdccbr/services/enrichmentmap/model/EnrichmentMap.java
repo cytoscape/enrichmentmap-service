@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -338,11 +339,11 @@ public class EnrichmentMap {
 		return params;
 	}
 
-	public static Set<String> getNodesUnion(Collection<? extends AbstractDataSet> dataSets) {
+	public static Set<UUID> getNodesUnion(Collection<? extends AbstractDataSet> dataSets) {
 		return getUnion(dataSets, AbstractDataSet::getNodeIds);
 	}
 	
-	public static Set<String> getNodesIntersection(Collection<? extends AbstractDataSet> dataSets) { 
+	public static Set<UUID> getNodesIntersection(Collection<? extends AbstractDataSet> dataSets) { 
 		return getIntersection(dataSets, AbstractDataSet::getNodeIds);
 	}
 			
@@ -352,7 +353,7 @@ public class EnrichmentMap {
 	 * 
 	 * Note, this will only return distinct edges, not compound edges.
 	 */
-	public static Set<String> getEdgesUnion(Collection<? extends AbstractDataSet> dataSets) {
+	public static Set<UUID> getEdgesUnion(Collection<? extends AbstractDataSet> dataSets) {
 		return getUnion(dataSets, AbstractDataSet::getEdgeIds);
 	}
 	
@@ -362,19 +363,19 @@ public class EnrichmentMap {
 	 * 
 	 * Note, this will only return distinct edges, not compound edges.
 	 */
-	public static Set<String> getEdgesIntersection(Collection<? extends AbstractDataSet> dataSets) {
+	public static Set<UUID> getEdgesIntersection(Collection<? extends AbstractDataSet> dataSets) {
 		return getIntersection(dataSets, AbstractDataSet::getEdgeIds);
 	}
 	
-	private static Set<String> getUnion(
+	private static Set<UUID> getUnion(
 			Collection<? extends AbstractDataSet> dataSets,
 			Function<AbstractDataSet,
-			Set<String>> idSupplier
+			Set<UUID>> idSupplier
 	) {
 		if (dataSets.isEmpty())
 			return Collections.emptySet();
 
-		var ids = new HashSet<String>();
+		var ids = new HashSet<UUID>();
 
 		for (var ds : dataSets) {
 			ids.addAll(idSupplier.apply(ds));
@@ -383,10 +384,10 @@ public class EnrichmentMap {
 		return ids;
 	}
 	
-	private static Set<String> getIntersection(
+	private static Set<UUID> getIntersection(
 			Collection<? extends AbstractDataSet> dataSets,
 			Function<AbstractDataSet,
-			Set<String>> idSupplier
+			Set<UUID>> idSupplier
 	) {
 		if (dataSets.isEmpty())
 			return Collections.emptySet();

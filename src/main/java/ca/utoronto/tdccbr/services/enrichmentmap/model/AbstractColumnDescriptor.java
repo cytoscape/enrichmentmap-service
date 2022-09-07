@@ -1,5 +1,7 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.model;
 
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
+
 public abstract class AbstractColumnDescriptor {
 
 	protected final String name;

@@ -14,11 +14,11 @@ import ca.utoronto.tdccbr.services.enrichmentmap.dto.NodeDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.NodeDataDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.RequestDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.ResultDTO;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyNetwork;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.CyTable.CyRow;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentMap;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.GenesetSimilarity;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.SimilarityKey;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNetwork;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable.CyRow;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ComputeSimilarityTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.CreateEMNetworkTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.FilterGenesetsByDatasetGenesTask;
@@ -93,7 +93,7 @@ public class EMService {
 		var edgeList = elementsDto.getEdges();
 		
 		for (var n : net.getNodeList()) {
-			var nd = new NodeDTO(n.getId());
+			var nd = new NodeDTO(n.getID().toString());
 			nodeList.add(nd);
 			
 			// Set EM the attributes
@@ -103,7 +103,7 @@ public class EMService {
 		}
 		
 		for (var e : net.getEdgeList()) {
-			var ed = new EdgeDTO(e.getId(), e.getSource().getId(), e.getTarget().getId());
+			var ed = new EdgeDTO(e.getID().toString(), e.getSource().getID().toString(), e.getTarget().getID().toString());
 			edgeList.add(ed);
 			
 			// Set EM the attributes

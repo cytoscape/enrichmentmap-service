@@ -1,4 +1,4 @@
-package ca.utoronto.tdccbr.services.enrichmentmap.model;
+package ca.utoronto.tdccbr.services.enrichmentmap.model.network;
 
 import java.util.Objects;
 

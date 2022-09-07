@@ -5,12 +5,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
+
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyEdge;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
 
 public abstract class AbstractDataSet implements Comparable<AbstractDataSet> {
 
 	private final String name;
-	private final Set<String> nodeIds = new HashSet<>();
-	private final Set<String> edgeIds = new HashSet<>();
+	private final Set<UUID> nodeIds = new HashSet<>();
+	private final Set<UUID> edgeIds = new HashSet<>();
 	
 	/** EnrichmentMap only creates nodes for these genes. */
 	private SetOfGeneSets geneSetsOfInterest = new SetOfGeneSets();
@@ -45,7 +49,7 @@ public abstract class AbstractDataSet implements Comparable<AbstractDataSet> {
 
 	public boolean containsAnyNode(Collection<CyNode> nodes) {
 		for (var n : nodes) {
-			if (nodeIds.contains(n.getId()))
+			if (nodeIds.contains(n.getID()))
 				return true;
 		}
 		return false;
@@ -53,26 +57,26 @@ public abstract class AbstractDataSet implements Comparable<AbstractDataSet> {
 
 	public boolean containsAnyEdge(Collection<CyEdge> edges) {
 		for (var e : edges) {
-			if (edgeIds.contains(e.getId()))
+			if (edgeIds.contains(e.getID()))
 				return true;
 		}
 		return false;
 	}
 
-	public Set<String> getNodeIds() {
+	public Set<UUID> getNodeIds() {
 		synchronized (lock) {
 			return Collections.unmodifiableSet(nodeIds);
 		}
 	}
 
-	public void setNodeIds(Set<String> newValue) {
+	public void setNodeIds(Set<UUID> newValue) {
 		synchronized (lock) {
 			nodeIds.clear();
 			nodeIds.addAll(newValue);
 		}
 	}
 
-	public void addNodeId(String id) {
+	public void addNodeId(UUID id) {
 		synchronized (lock) {
 			nodeIds.add(id);
 		}
@@ -84,20 +88,20 @@ public abstract class AbstractDataSet implements Comparable<AbstractDataSet> {
 		}
 	}
 
-	public Set<String> getEdgeIds() {
+	public Set<UUID> getEdgeIds() {
 		synchronized (lock) {
 			return Collections.unmodifiableSet(edgeIds);
 		}
 	}
 
-	public void setEdgeIds(Set<String> newValue) {
+	public void setEdgeIds(Set<UUID> newValue) {
 		synchronized (lock) {
 			edgeIds.clear();
 			edgeIds.addAll(newValue);
 		}
 	}
 
-	public void addEdgeId(String id) {
+	public void addEdgeId(UUID id) {
 		synchronized (lock) {
 			edgeIds.add(id);
 		}
