@@ -12,6 +12,8 @@ public class NodeDataDTO {
 	private double fdrQvalue;
 	private double NES;
 	private double colouring;
+	private String mcodeClusterID;
+	
 	
 	public NodeDataDTO() {
 		// We need this zero-argument constructor because of the JavaBean standard...
@@ -91,6 +93,15 @@ public class NodeDataDTO {
 		this.colouring = colouring;
 	}
 
+	@JsonProperty("mcode_cluster_id")
+	public String getMcodeClusterID() {
+		return  mcodeClusterID;
+	}
+	
+	public void setMcodeClusterID(String mcodeClusterID) {
+		this.mcodeClusterID = mcodeClusterID;
+	}
+	
 	@Override
 	public String toString() {
 		return "NodeDataDTO [id=" + id + ", name=" + name + "]";

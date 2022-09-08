@@ -3,6 +3,7 @@ package ca.utoronto.tdccbr.services.enrichmentmap.service;
 import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ import ca.utoronto.tdccbr.services.enrichmentmap.task.InitializeGenesetsOfIntere
 import ca.utoronto.tdccbr.services.enrichmentmap.task.LoadEnrichmentsFromFGSEATask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ModelCleanupTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.Task;
+import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEAnalyzeTask;
+import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEUtil;
 import ca.utoronto.tdccbr.services.enrichmentmap.util.Baton;
 
 @Service
@@ -59,18 +62,35 @@ public class EMService {
 		// Trim the genesets to only contain the genes that are in the data file.
 		tasks.add(new FilterGenesetsByDatasetGenesTask(em));
 		
-		var pipe = new Baton<Map<SimilarityKey, GenesetSimilarity>>();
+		var emPipe = new Baton<Map<SimilarityKey,GenesetSimilarity>>();
+		var mcodePipe = new Baton<CyNetwork>();
 
 		// Compute the geneset similarities
-		tasks.add(new ComputeSimilarityTask(em, pipe.consumer()));
+		tasks.add(new ComputeSimilarityTask(em, emPipe.consumer()));
 
 		// Create the network
-		var netTask = new CreateEMNetworkTask(em, pipe.supplier());
+		var netTask = new CreateEMNetworkTask(em, emPipe.supplier(), mcodePipe.consumer());
 		tasks.add(netTask);
 
 		// Make any final adjustments to the model
 		tasks.add(new ModelCleanupTask(em)); // TODO probably not necessary
 		
+		// Run clustering task (saves data as node columns)
+		tasks.add(new MCODEAnalyzeTask(mcodePipe.supplier()));
+		
+		
+		runTasks(tasks);
+		
+		
+		var network = netTask.getNetwork();
+		var netDto = createNetworkDTO(network);
+		
+		return new ResultDTO(em.getParams(), netDto);
+	}
+	
+	
+	
+	private static void runTasks(Collection<Task> tasks) {
 		for (var t : tasks) {
 			try {
 				t.run();
@@ -79,12 +99,8 @@ public class EMService {
 				e.printStackTrace();
 			}
 		}
-		
-		var network = netTask.getResults(CyNetwork.class);
-		var netDto = createNetworkDTO(network);
-		
-		return new ResultDTO(em.getParams(), netDto);
 	}
+	
 	
 	private static NetworkDTO createNetworkDTO(CyNetwork net) {
 		var netDto = new NetworkDTO();
@@ -123,6 +139,11 @@ public class EMService {
 		dto.setFdrQvalue(NODE_FDR_QVALUE.get(row, NAMESPACE_PREFIX));
 		dto.setNES(NODE_NES.get(row, NAMESPACE_PREFIX));
 		dto.setColouring(NODE_COLOURING.get(row, NAMESPACE_PREFIX));
+		
+		var mcodeClusterIds = row.getList(MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, 99), String.class);
+		if(mcodeClusterIds != null && !mcodeClusterIds.isEmpty()) {
+			dto.setMcodeClusterID(mcodeClusterIds.get(0));
+		}
 	}
 	
 	private static void copyAttributes(CyRow row, EdgeDataDTO dto) {

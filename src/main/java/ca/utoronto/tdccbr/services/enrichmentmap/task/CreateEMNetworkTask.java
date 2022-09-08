@@ -1,14 +1,10 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.task;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.Columns;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EMDataSet;
@@ -29,33 +25,31 @@ public class CreateEMNetworkTask implements Task {
 	private final EnrichmentMap map;
 	private final String prefix = Columns.NAMESPACE_PREFIX;
 
-	private final Supplier<Map<SimilarityKey, GenesetSimilarity>> supplier;
+	private final Supplier<Map<SimilarityKey, GenesetSimilarity>> similaritySupplier;
+	private final Consumer<CyNetwork> networkConsumer;
 
 	private CyNetwork emNetwork;
 
-	@Inject
 	public CreateEMNetworkTask(
-			@Assisted EnrichmentMap map,
-			@Assisted Supplier<Map<SimilarityKey, GenesetSimilarity>> supplier
+		EnrichmentMap map,
+		Supplier<Map<SimilarityKey, GenesetSimilarity>> similaritySupplier,
+		Consumer<CyNetwork> networkConsumer
 	) {
 		this.map = map;
-		this.supplier = supplier;
+		this.similaritySupplier = similaritySupplier;
+		this.networkConsumer = networkConsumer;
 	}
 	
 	@Override
-	public void run() throws Exception {
+	public void run() {
 		emNetwork = createEMNetwork();
+		if(networkConsumer != null)
+			networkConsumer.accept(emNetwork);
 	}
 	
-	public List<Class<?>> getResultClasses() {
-		return Arrays.asList(String.class, Long.class);
-	}
 	
-	public <R> R getResults(Class<? extends R> type) {
-		if (CyNetwork.class.equals(type))
-			return type.cast(emNetwork);
-		
-		return null;
+	public CyNetwork getNetwork() {
+		return emNetwork;
 	}
 	
 	private CyNetwork createEMNetwork() {
@@ -132,7 +126,7 @@ public class CreateEMNetworkTask implements Task {
 	 * @param nodes
 	 */
 	private void createEdges(CyNetwork network, Map<String,CyNode> nodes) {
-		var similarities = supplier.get();
+		var similarities = similaritySupplier.get();
 		
 		for (var key : similarities.keySet()) {
 			var similarity = similarities.get(key);

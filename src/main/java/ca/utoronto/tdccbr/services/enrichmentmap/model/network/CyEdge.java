@@ -15,7 +15,7 @@ public class CyEdge implements CyIdentifiable {
 	 * The Type enum is used by methods in {@link CyNetwork} to restrict
 	 * the edges that match a query. 
 	 */
-	enum Type {
+	public static enum Type {
 
 		/**
 		 * matches only undirected edges
