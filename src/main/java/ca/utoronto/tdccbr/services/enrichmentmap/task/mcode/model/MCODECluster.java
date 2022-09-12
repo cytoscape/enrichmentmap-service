@@ -57,8 +57,6 @@ public class MCODECluster {
 	private UUID seedNode;
 	private List<UUID> nodes;
 	
-//	/** keeps track of layout so that layout process doesn't have to be repeated unnecessarily */
-//	private transient CyNetworkView view;
 	/** stores the nodes that have already been included in higher ranking clusters */
 	private transient Map<UUID, Boolean> nodeSeenHashMap;
 	private transient MCODEGraph graph;
@@ -106,23 +104,6 @@ public class MCODECluster {
 	public MCODEGraph getGraph() {
 		return graph;
 	}
-	
-//	public CyNetworkView getView() {
-//		return view;
-//	}
-
-//	public void setView(CyNetworkView view) {
-//		throwExceptionIfDisposed();
-//		
-//		if (this.view != null)
-//			this.view.dispose();
-//		
-//		this.view = view;
-//	}
-
-//	public CySubNetwork getNetwork() {
-//		return graph.getSubNetwork();
-//	}
 	
 	public double getScore() {
 		return score;
@@ -175,9 +156,6 @@ public class MCODECluster {
 				return;
 			
 			removeAllPropertyChangeListeners();
-			
-//			if (view != null)
-//				view.dispose();
 			
 			graph.dispose();
 			disposed = true;

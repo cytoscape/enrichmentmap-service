@@ -65,9 +65,6 @@ import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEUtil;
 public class MCODEAlgorithm {
 
 	private boolean cancelled;
-//	private TaskMonitor taskMonitor;
-	
-//	private static final Logger logger = LoggerFactory.getLogger(CyUserLog.class);
 
 	//data structure for storing information required for each node
 	private static class NodeInfo {
@@ -119,29 +116,7 @@ public class MCODEAlgorithm {
 	// Stats
 	private long lastScoreTime;
 	private long lastFindTime;
-	private int count;
 
-//	private final MCODEUtil mcodeUtil;
-
-	/**
-	 * The constructor.  Use this to get an instance of MCODE to run.
-	 *
-	 * @param networkID Allows the algorithm to get the parameters of the focused network
-	 */
-//	public MCODEAlgorithm(Long networkID, MCODEUtil mcodeUtil) {
-//		this.mcodeUtil = mcodeUtil;
-//		setParams(mcodeUtil.getParameterManager().getNetworkParams(networkID));
-//	}
-//
-//	public MCODEAlgorithm(TaskMonitor taskMonitor, Long networkID, MCODEUtil mcodeUtil) {
-//		this(networkID, mcodeUtil);
-//		this.taskMonitor = taskMonitor;
-//	}
-//
-//	public void setTaskMonitor(TaskMonitor taskMonitor, Long networkID) {
-//		this.taskMonitor = taskMonitor;
-//		setParams(mcodeUtil.getParameterManager().getNetworkParams(networkID));
-//	}
 
 	
 	public MCODEAlgorithm(MCODEParameters params) {
@@ -234,10 +209,8 @@ public class MCODEAlgorithm {
 	 * @param resultId Title of the result, used as an identifier in various hash maps
 	 */
 	public void scoreGraph(final CyNetwork inputNetwork, final int resultId) {
-//		var callerID = "MCODEAlgorithm.MCODEAlgorithm";
 
 		if (inputNetwork == null) {
-//			logger.error("In " + callerID + ": inputNetwork was null.");
 			return;
 		}
 
@@ -267,9 +240,6 @@ public class MCODEAlgorithm {
 	        		return null;
 	        	
 	        	final NodeInfo nodeInfo = calcNodeInfo(inputNetwork, n);
-	        	
-//	        	if (taskMonitor != null)
-//					taskMonitor.setProgress(++count / (double) nodes.size());
 	        	
 				return nodeInfo;
 		    };
@@ -314,7 +284,6 @@ public class MCODEAlgorithm {
 			currentNodeScoreSortedMap = nodeScoreSortedMap;
 			currentNodeInfoHashMap = nodeInfoHashMap;
 		} catch (Exception e) {
-//			logger.error("Error calculating nodes info.", e);
 			e.printStackTrace();
 		} finally {
             exec.shutdown();
@@ -415,15 +384,6 @@ public class MCODEAlgorithm {
 					}
 				}
 
-//				if (taskMonitor != null) {
-//					// We want to be sure that only progress changes are reported and not
-//					// miniscule decimal increments so that the taskMonitor isn't overwhelmed
-//					double newProgress = ++findingProgress / findingTotal;
-//
-//					if (Math.round(newProgress * 100) != Math.round((newProgress - 0.01) * 100))
-//						taskMonitor.setProgress(newProgress);
-//				}
-
 				if (cancelled)
 					break;
 			}
@@ -462,60 +422,6 @@ public class MCODEAlgorithm {
 		return clusters;
 	}
 
-//	/**
-//	 * Finds the cluster based on user's input via size slider.
-//	 *
-//	 * @param cluster cluster being explored
-//	 * @param nodeScoreCutoff slider source value
-//	 * @param inputNet network
-//	 * @param resultId ID of the result set being explored
-//	 * @return explored cluster
-//	 */
-//	public MCODECluster exploreCluster(final MCODECluster cluster,
-//									   final double nodeScoreCutoff,
-//									   final CyNetwork inputNet,
-//									   final int resultId) {
-//		// This method is similar to the finding method with the exception of the filtering so that the decrease of the cluster size
-//		// can produce a single node, also the use of the node seen hash map is differentially applied...
-//		final Map<UUID, NodeInfo> nodeInfoHashMap = nodeInfoResultsMap.get(resultId);
-//		final MCODEParameters params = mcodeUtil.getParameterManager().getResultParams(cluster.getResultId());
-//		final Map<UUID, Boolean> nodeSeenHashMap;
-//
-//		// If the size slider is below the set node score cutoff we use the node seen hash map so that clusters
-//		// with higher scoring seeds have priority, however when the slider moves higher than the node score cutoff
-//		// we allow the cluster to accrue nodes from all around without the priority restriction
-//		if (nodeScoreCutoff <= params.getNodeScoreCutoff())
-//			nodeSeenHashMap = new HashMap<>(cluster.getNodeSeenHashMap());
-//		else
-//			nodeSeenHashMap = new HashMap<>();
-//
-//		final UUID seedNode = cluster.getSeedNode();
-//
-//		final List<UUID> clusterCore = getClusterCore(seedNode, nodeSeenHashMap, nodeScoreCutoff, params
-//				.getMaxDepthFromStart(), nodeInfoHashMap);
-//
-//		// Make sure seed node is part of cluster, if not already in there
-//		if (!clusterCore.contains(seedNode))
-//			clusterCore.add(seedNode);
-//
-//		// Create an input graph for the filter and haircut methods
-//		MCODEGraph clusterGraph = createClusterGraph(clusterCore, inputNet);
-//
-//		if (params.getHaircut())
-//			haircutCluster(clusterGraph, clusterCore);
-//
-//		if (params.getFluff())
-//			fluffClusterBoundary(clusterCore, nodeSeenHashMap, nodeInfoHashMap);
-//
-//		clusterGraph = createClusterGraph(clusterCore, inputNet);
-//		final double score = scoreCluster(clusterGraph);
-//		
-//		final MCODECluster newCluster = new MCODECluster(resultId, seedNode, clusterGraph, score, clusterCore,
-//				nodeSeenHashMap);
-//		newCluster.setRank(cluster.getRank());
-//		
-//		return newCluster;
-//	}
 
 	private MCODEGraph createClusterGraph(final List<UUID> clusterCore, final CyNetwork inputNet) {
 		final Set<CyNode> nodes = new HashSet<>();
@@ -580,7 +486,6 @@ public class MCODEAlgorithm {
 		final String callerID = "MCODEAlgorithm.calcNodeInfo";
 
 		if (inputNetwork == null) {
-//			logger.error("In " + callerID + ": gpInputGraph was null.");
 			return null;
 		}
 
@@ -840,7 +745,6 @@ public class MCODEAlgorithm {
 		String callerID = "MCODEAlgorithm.calcDensity";
 
 		if (graph == null) {
-//			logger.error("In " + callerID + ": network was null.");
 			return (-1.0);
 		}
 
@@ -890,10 +794,7 @@ public class MCODEAlgorithm {
 	 * @return Returns a subgraph with the core, if any was found at given k
 	 */
 	private MCODEGraph getKCore(final MCODEGraph inputGraph, final int k) {
-		String callerID = "MCODEAlgorithm.getKCore";
-
 		if (inputGraph == null) {
-//			logger.error("In " + callerID + ": inputNetwork was null.");
 			return null;
 		}
 
@@ -947,10 +848,7 @@ public class MCODEAlgorithm {
 	 *         The second object is the highest k-core as a MCODEGraph i.e. objectArray[1]
 	 */
 	private Object[] getHighestKCore(final MCODEGraph graph) {
-		final String callerID = "MCODEAlgorithm.getHighestKCore";
-
 		if (graph == null) {
-//			logger.error("In " + callerID + ": network was null.");
 			return (null);
 		}
 

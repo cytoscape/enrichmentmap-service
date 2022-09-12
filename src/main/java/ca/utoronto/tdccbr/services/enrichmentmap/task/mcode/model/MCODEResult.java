@@ -49,7 +49,6 @@ public class MCODEResult {
 	private boolean stale;
 	
 	private final transient CyNetwork network;
-//	private transient VisualStyle style;
 	
 	private final Object lock = new Object();
 	
@@ -86,17 +85,6 @@ public class MCODEResult {
 		}
 	}
 	
-//	/**
-//	 * @return the MCODE style for this result or null if none has been created yet
-//	 */
-//	public VisualStyle getStyle() {
-//		return style;
-//	}
-//	
-//	public void setStyle(VisualStyle style) {
-//		this.style = style;
-//	}
-	
 	/**
 	 * Indicates whether or not this result has become stale, usually because the analyzed network had nodes or edges
 	 * added or removed after the analysis.
@@ -110,8 +98,4 @@ public class MCODEResult {
 		this.stale = true;
 	}
 	
-//	@Override
-//	public String toString() {
-//		return id + " - " + MCODEUtil.getName(network);
-//	}
 }

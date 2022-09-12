@@ -17,7 +17,6 @@ public class MCODEGraph {
 	private final Map<UUID, CyNode> nodeMap;
 	private final Map<UUID, CyEdge> edgeMap;
 	private CyNetwork subNetwork;
-//	private MCODEUtil mcodeUtil;
 	private boolean disposed;
 	
 	private final Object lock = new Object();
@@ -30,7 +29,6 @@ public class MCODEGraph {
 		if (edges == null)
 			throw new NullPointerException("edges is null!");
 
-//		this.mcodeUtil = mcodeUtil;
 		this.parentNetwork = parentNetwork;
 		this.nodeMap = new HashMap<>(nodes.size());
 		this.edgeMap = new HashMap<>(edges.size());
@@ -123,15 +121,6 @@ public class MCODEGraph {
 		return parentNetwork;
 	}
 
-//	public CySubNetwork getSubNetwork() {
-//		synchronized (lock) {
-//			if (!disposed && subNetwork == null)
-//				subNetwork = mcodeUtil.createSubNetwork(parentNetwork, getNodeList(), getEdgeList(), SavePolicy.DO_NOT_SAVE);
-//	
-//			return subNetwork;
-//		}
-//	}
-
 	public boolean isDisposed() {
 		synchronized (lock) {
 			return disposed;
@@ -144,7 +133,6 @@ public class MCODEGraph {
 				return;
 
 			if (subNetwork != null) {
-//				mcodeUtil.destroy(subNetwork);
 				subNetwork = null;
 			}
 

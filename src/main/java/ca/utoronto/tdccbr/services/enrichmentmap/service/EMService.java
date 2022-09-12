@@ -140,7 +140,7 @@ public class EMService {
 		dto.setNES(NODE_NES.get(row, NAMESPACE_PREFIX));
 		dto.setColouring(NODE_COLOURING.get(row, NAMESPACE_PREFIX));
 		
-		var mcodeClusterIds = row.getList(MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, 99), String.class);
+		var mcodeClusterIds = row.getList(MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, MCODEAnalyzeTask.DEF_RESULT_ID), String.class);
 		if(mcodeClusterIds != null && !mcodeClusterIds.isEmpty()) {
 			dto.setMcodeClusterID(mcodeClusterIds.get(0));
 		}

@@ -65,26 +65,21 @@ import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.model.MCODEResult;
  */
 public class MCODEAnalyzeTask implements Task {
 	
+	public static final int DEF_RESULT_ID = 1;
+	
 	public final static int FIRST_TIME = 0;
 	public final static int RESCORE = 1;
 	public final static int REFIND = 2;
 	public final static int INTERRUPTION = 3;
 
 	private final MCODEAlgorithm alg;
-//	private final MCODEUtil mcodeUtil;
-//	private final MCODEResultsManager resultsMgr;
-//	private final int mode;
-	private final int resultId;
+	private final int resultId = DEF_RESULT_ID; // Hardcoded for now
 
-	private boolean cancelled;
-	
 	private final Supplier<CyNetwork> networkSupplier;
 	private CyNetwork network;
 	
 	private MCODEResult result;
 	
-//	private static final Logger logger = LoggerFactory.getLogger(CyUserLog.class);
-
 	/**
 	 * Scores and finds clusters in a given network
 	 *
@@ -93,21 +88,9 @@ public class MCODEAnalyzeTask implements Task {
 	 * @param resultId Identifier of the current result set
 	 * @param alg reference to the algorithm for this network
 	 */
-	public MCODEAnalyzeTask(
-			Supplier<CyNetwork> networkSupplier
-//			int mode,
-//			int resultId,
-//			MCODEAlgorithm alg,
-//			MCODEResultsManager resultsMgr,
-//			MCODEUtil mcodeUtil
-	) {
+	public MCODEAnalyzeTask(Supplier<CyNetwork> networkSupplier) {
 		this.networkSupplier = networkSupplier;
-//		this.mode = mode;
-		this.resultId = 99; //resultId;  // MKTODO hardcode for now
-//		this.alg = alg;
 		this.alg = new MCODEAlgorithm(null);
-//		this.resultsMgr = resultsMgr;
-//		this.mcodeUtil = mcodeUtil;
 	}
 
 	/**
@@ -115,185 +98,59 @@ public class MCODEAnalyzeTask implements Task {
 	 */
 	@Override
 	public void run() throws Exception {
-//		if (tm == null)
-//			throw new IllegalStateException("Task Monitor is not set.");
-//
-//		tm.setTitle("MCODE Analysis");
-//		tm.setProgress(0.0);
-		
 		network = networkSupplier.get();
 		if(network == null)
 			return;
 		
 		try {
-			// Run MCODE scoring algorithm - node scores are saved in the alg object
-//			alg.setTaskMonitor(tm, network.getSUID());
-
-			// Only (re)score the graph if the scoring parameters have been changed
-//			if (mode == RESCORE) {
-//				tm.setProgress(0.001);
-//				tm.setStatusMessage("Scoring Network (Step 1 of 3)");
 				
-				alg.scoreGraph(network, resultId);
-//
-//				if (cancelled)
-//					return;
-
-//				logger.info("Network was scored in " + alg.getLastScoreTime() + " ms.");
-//			}
-
-//			tm.setProgress(0.001);
-//			tm.setStatusMessage("Finding Clusters (Step 2 of 3)");
+			alg.scoreGraph(network, resultId);
 
 			var clusters = alg.findClusters(network, resultId);
 
-			if (cancelled || clusters.isEmpty())
+			if (clusters.isEmpty())
 				return;
 			
-//			tm.setProgress(0.5);
-//			tm.setStatusMessage("Drawing Results (Step 3 of 3)");
-//			result = resultsMgr.createResult(network, alg.getParams().copy(), clusters);
-			
-			result = new MCODEResult(99, network, alg.getParams().copy(), clusters);
+			result = new MCODEResult(resultId, network, alg.getParams().copy(), clusters);
 			
 			createNetworkAttributes();
-//			tm.setProgress(1.0);
 		} catch (Exception e) {
 			throw new Exception("Error while executing the MCODE analysis", e);
 		}
 	}
 
-//	@Override
-//	public void cancel() {
-//		cancelled = true;
-//		alg.setCancelled(true);
-//		resultsMgr.removeResult(resultId);
-//		mcodeUtil.removeNetworkAlgorithm(network.getSUID());
-//	}
-
-//	@Override
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	public Object getResults(Class type) {
-//		if (type == MCODEResult.class)
-//			return result;
-//		
-//		if (type == String.class) {
-//			var color = LookAndFeelUtil.getSuccessColor();
-//			
-//			if (color == null)
-//				color = Color.DARK_GRAY;
-//			
-//			var sb = new StringBuilder();
-//			
-//			if (result == null) {
-//				sb.append("No clusters were found.\n"
-//						+ "You can try changing the MCODE parameters or modifying your node selection"
-//						+ " if you are using a selection-specific scope."
-//				);
-//			} else {
-//				var clusters = result.getClusters();
-//				
-//				sb.append(String.format(
-//						"<html><body>"
-//						+ "<span style='font-family: monospace; color: %1$s;'>Result #" + resultId + ":</span><br /> <br />"
-//						+ "<table style='font-family: monospace; color: %1$s;'>"
-//						+ "<tr style='font-weight: bold; border-width: 0px 0px 1px 0px; border-style: dotted;'>"
-//						+ "<th style='text-align: left;'>Rank</th>"
-//						+ "<th style='text-align: left;'>Score</th>"
-//						+ "<th style='text-align: left;'>Nodes</th>"
-//						+ "<th style='text-align: left;'>Edges</th>"
-//						+ "</tr>",
-//						("#" + Integer.toHexString(color.getRGB()).substring(2))
-//				));
-//				
-//				for (var c : clusters)
-//					sb.append(String.format(
-//							"<tr>"
-//							+ "<td style='text-align: right;'>%d</td>"
-//							+ "<td style='text-align: right;'>%f</td>"
-//							+ "<td style='text-align: right;'>%d</td>"
-//							+ "<td style='text-align: right;'>%d</td></tr>",
-//							c.getRank(),
-//							c.getScore(),
-//							c.getGraph().getNodeCount(),
-//							c.getGraph().getEdgeCount()
-//					));
-//				
-//				sb.append("</table></body></html>");
-//			}
-//			
-//			return sb.toString();
-//		}
-//		
-//		if (type == JSONResult.class) {
-//			var gson = new Gson();
-//			JSONResult res = () -> { return gson.toJson(result); };
-//			
-//			return res;
-//		}
-//		
-//		return null;
-//	}
-	
-//	@Override
-//	public List<Class<?>> getResultClasses() {
-//		return Arrays.asList(MCODEResult.class, String.class, JSONResult.class);
-//	}
 	
 	private void createNetworkAttributes() {
-//		tm.setStatusMessage("Creating Node Table columns...");
 		MCODEUtil.createMCODEColumns(result);
-
-//		tm.setProgress(0.6);
-//		tm.setStatusMessage("Updating Node Table values...");
 
 		int resultId = result.getId();
 		var network = result.getNetwork();
 		var clusters = result.getClusters();
-//		var alg = MCODEUtil.getNetworkAlgorithm(network.getID());
 
 		var scoreCol = columnName(SCORE_ATTR, result);
 		var nodeStatusCol = columnName(NODE_STATUS_ATTR, result);
 		var clusterCol = columnName(CLUSTERS_ATTR, result);
 
 		for (var n : network.getNodeList()) {
-			if (cancelled)
-				return;
 
 			var nId = n.getID();
 			var nodeRow = network.getRow(n);
 
-			if (cancelled)
-				return;
-
 			nodeRow.set(nodeStatusCol, "Unclustered");
-
-			if (cancelled)
-				return;
 
 			nodeRow.set(scoreCol, alg.getNodeScore(n.getID(), resultId));
 
 			for (var c : clusters) {
-				if (cancelled)
-					return;
-
 				if (c.getNodes().contains(nId)) {
 					var clusterNameSet = new LinkedHashSet<String>();
 
-//					if (nodeRow.isSet(clusterCol))
 					var list = nodeRow.getList(clusterCol, String.class);
 					if(list != null)
 						clusterNameSet.addAll(list);
 
 					clusterNameSet.add(c.getName());
 
-					if (cancelled)
-						return;
-
 					nodeRow.set(clusterCol, new ArrayList<>(clusterNameSet));
-
-					if (cancelled)
-						return;
 
 					if (c.getSeedNode() == nId)
 						nodeRow.set(nodeStatusCol, "Seed");
