@@ -12,6 +12,17 @@ public class EMCreationParametersDTO implements EnrichmentResultFilterParams {
 		AUTOMATIC, DISTINCT, COMPOUND
 	}
 	
+	/*
+	 	These are the slider defaults in the EM creation dialog.
+	 	sparse
+			similarityMetric=JACCARD, similarityCutoff=0.35,
+			similarityMetric=JACCARD, similarityCutoff=0.25,
+			similarityMetric=COMBINED, similarityCutoff=0.375, combinedConstant = 0.5,
+			similarityMetric=OVERLAP, similarityCutoff=0.5,
+			similarityMetric=OVERLAP, similarityCutoff=0.25,
+		dense
+	 */
+	
 	// Node filtering (gene-sets)
 	private double pvalue = 1.0;
 	private double qvalue = 0.1;
