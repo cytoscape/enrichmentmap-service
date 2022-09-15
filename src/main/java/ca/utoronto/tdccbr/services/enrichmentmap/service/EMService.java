@@ -4,17 +4,21 @@ import static ca.utoronto.tdccbr.services.enrichmentmap.model.Columns.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import ca.utoronto.tdccbr.services.enrichmentmap.dto.ClusterLabelsDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.EdgeDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.EdgeDataDTO;
+import ca.utoronto.tdccbr.services.enrichmentmap.dto.LabelDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.NetworkDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.NodeDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.NodeDataDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.RequestDTO;
 import ca.utoronto.tdccbr.services.enrichmentmap.dto.ResultDTO;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.Columns;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentMap;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.GenesetSimilarity;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.SimilarityKey;
@@ -28,12 +32,17 @@ import ca.utoronto.tdccbr.services.enrichmentmap.task.InitializeGenesetsOfIntere
 import ca.utoronto.tdccbr.services.enrichmentmap.task.LoadEnrichmentsFromFGSEATask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ModelCleanupTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.Task;
+import ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.ClusterLabelTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEAnalyzeTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEUtil;
-import ca.utoronto.tdccbr.services.enrichmentmap.util.Baton;
+import ca.utoronto.tdccbr.services.enrichmentmap.util.TaskPipe;
 
 @Service
 public class EMService {
+	
+	private static final String CLUSTER_ID_COLUMN = MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, MCODEAnalyzeTask.DEF_RESULT_ID);
+	private static final String CLUSTER_LABEL_COLUMN = Columns.NODE_GS_DESCR.with(Columns.NAMESPACE_PREFIX);
+	
 	
 
 	public ResultDTO createNetwork(RequestDTO request) {
@@ -62,21 +71,25 @@ public class EMService {
 		// Trim the genesets to only contain the genes that are in the data file.
 		tasks.add(new FilterGenesetsByDatasetGenesTask(em));
 		
-		var emPipe = new Baton<Map<SimilarityKey,GenesetSimilarity>>();
-		var mcodePipe = new Baton<CyNetwork>();
+		var similarityPipe = new TaskPipe<Map<SimilarityKey,GenesetSimilarity>>();
+		var networkPipe = new TaskPipe<CyNetwork>();
 
 		// Compute the geneset similarities
-		tasks.add(new ComputeSimilarityTask(em, emPipe.consumer()));
+		tasks.add(new ComputeSimilarityTask(em, similarityPipe.in()));
 
 		// Create the network
-		var netTask = new CreateEMNetworkTask(em, emPipe.supplier(), mcodePipe.consumer());
+		var netTask = new CreateEMNetworkTask(em, similarityPipe.out(), networkPipe.in());
 		tasks.add(netTask);
 
 		// Make any final adjustments to the model
 		tasks.add(new ModelCleanupTask(em)); // TODO probably not necessary
 		
-		// Run clustering task (saves data as node columns)
-		tasks.add(new MCODEAnalyzeTask(mcodePipe.supplier()));
+		// Run clustering task (saves cluster IDs as node attributes)
+		tasks.add(new MCODEAnalyzeTask(networkPipe.out()));
+		
+		// Run autoannotate/wordcloud to get labels for the clusters.
+		var clusterLabelTask = new ClusterLabelTask(CLUSTER_LABEL_COLUMN, CLUSTER_ID_COLUMN, networkPipe.out());
+		tasks.add(clusterLabelTask);
 		
 		
 		runTasks(tasks);
@@ -85,7 +98,10 @@ public class EMService {
 		var network = netTask.getNetwork();
 		var netDto = createNetworkDTO(network);
 		
-		return new ResultDTO(em.getParams(), netDto);
+		var clusterLabels = clusterLabelTask.getClusterLabels();
+		var clusterLabelsDTO = createClusterLabelsDTO(clusterLabels);
+		
+		return new ResultDTO(em.getParams(), netDto, clusterLabelsDTO);
 	}
 	
 	
@@ -129,6 +145,16 @@ public class EMService {
 		}
 			
 		return netDto;
+	}
+	
+	private static ClusterLabelsDTO createClusterLabelsDTO(Map<String,String> labels) {
+		List<LabelDTO> labelDTOs = new ArrayList<>(labels.size());
+		
+		labels.forEach((clusterId, label) -> {
+			labelDTOs.add(new LabelDTO(clusterId, label));
+		});
+		
+		return new ClusterLabelsDTO(labelDTOs);
 	}
 	
 	private static void copyAttributes(CyRow row, NodeDataDTO dto) {
