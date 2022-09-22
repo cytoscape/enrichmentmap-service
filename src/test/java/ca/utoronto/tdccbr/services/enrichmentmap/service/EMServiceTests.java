@@ -61,7 +61,9 @@ public class EMServiceTests {
 		fgseaResults = objectMapper.readValue(fgseaResJson, new TypeReference<List<FGSEAEnrichmentResultDTO>>() {});
         
         dsParams = new DataSetParametersDTO(FGSEA_FILENAME, fgseaResults);
-        reqDTO = new RequestDTO(new EMCreationParametersDTO(), Collections.singletonList(dsParams));
+        var emParams = new EMCreationParametersDTO();
+        emParams.setFDR(false); // turn off q-value filtering for this test
+		reqDTO = new RequestDTO(emParams, Collections.singletonList(dsParams));
     }
 	
 	@Test

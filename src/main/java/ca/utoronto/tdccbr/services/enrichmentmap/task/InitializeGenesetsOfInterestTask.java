@@ -1,55 +1,12 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.task;
 
-/**
- **                       EnrichmentMap Cytoscape Plugin
- **
- ** Copyright (c) 2008-2009 Bader Lab, Donnelly Centre for Cellular and Biomolecular 
- ** Research, University of Toronto
- **
- ** Contact: http://www.baderlab.org
- **
- ** Code written by: Ruth Isserlin
- ** Authors: Daniele Merico, Ruth Isserlin, Oliver Stueker, Gary D. Bader
- **
- ** This library is free software; you can redistribute it and/or modify it
- ** under the terms of the GNU Lesser General Public License as published
- ** by the Free Software Foundation; either version 2.1 of the License, or
- ** (at your option) any later version.
- **
- ** This library is distributed in the hope that it will be useful, but
- ** WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF
- ** MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
- ** documentation provided hereunder is on an "as is" basis, and
- ** University of Toronto
- ** has no obligations to provide maintenance, support, updates, 
- ** enhancements or modifications.  In no event shall the
- ** University of Toronto
- ** be liable to any party for direct, indirect, special,
- ** incidental or consequential damages, including lost profits, arising
- ** out of the use of this software and its documentation, even if
- ** University of Toronto
- ** has been advised of the possibility of such damage.  
- ** See the GNU Lesser General Public License for more details.
- **
- ** You should have received a copy of the GNU Lesser General Public License
- ** along with this library; if not, write to the Free Software Foundation,
- ** Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
- **
- **/
-
-// $Id$
-// $LastChangedDate$
-// $LastChangedRevision$
-// $LastChangedBy$
-// $HeadURL$
-
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EMDataSet;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentMap;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.GSEAResult;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.Ranking;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.FGSEAResult;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.SetOfGeneSets;
 
 /**
@@ -152,6 +109,20 @@ public class InitializeGenesetsOfInterestTask implements Task {
 					}
 				}
 			}
+			
+			// Limit size of resulting network
+			int max = map.getParams().getQvalueFilterMaxNodes();
+			if(max > 0) {
+				List<String> geneSetsSoFar = new ArrayList<>(genesetsOfInterest.keySet());
+				geneSetsSoFar.sort((gs1, gs2) -> {
+					var enr1 = (FGSEAResult) enrichmentResults.get(gs1);
+					var enr2 = (FGSEAResult) enrichmentResults.get(gs2);
+					return Double.compare(enr1.getPadj(), enr2.getPadj());
+				});
+				
+				var geneSetsToKeep = geneSetsSoFar.subList(0, Math.min(max, geneSetsSoFar.size()));
+				genesetsOfInterest.keySet().removeIf(gs -> !geneSetsToKeep.contains(gs));
+			}
 		}
 		
 		if (!missingGeneSets.isEmpty())
@@ -166,7 +137,8 @@ public class InitializeGenesetsOfInterestTask implements Task {
 //			}
 //		}
 
-		boolean empty = datasets.values().stream().map(EMDataSet::getGeneSetsOfInterest)
+		boolean empty = datasets.values().stream()
+				.map(EMDataSet::getGeneSetsOfInterest)
 				.allMatch(SetOfGeneSets::isEmpty);
 		
 		if (empty)
@@ -176,59 +148,59 @@ public class InitializeGenesetsOfInterestTask implements Task {
 		// TODO clear all the genesets that are not "of interest" just to free up memory
 	}
 
-	private void updateRankAtMax(GSEAResult currentResult, Ranking ranks) {
-		// Update the current geneset to reflect score at max
-		if (ranks != null) {
-			var allranks = ranks.getAllRanks();
-			Integer largestRank = Collections.max(allranks);
-
-			// get the max at rank for this geneset
-			int currentRankAtMax = currentResult.getRankAtMax();
-
-			if (currentRankAtMax != -1) {
-				// check the ES score.  If it is negative we need to adjust the rank to count from the end of the list
-				double NES = currentResult.getNES();
-				int genekey = -1;
-				
-				// what gene corresponds to that rank
-				if (NES < 0) {
-					// it is possible that some of the proteins in the rank list won't be rank 2gene
-					// conversion because some of the genes might not be in the genesets
-					// so the size of the list can't be used to trace up from the bottom of the
-					// ranks.  Instead we need to get the max rank used.
-					currentRankAtMax = largestRank - currentRankAtMax;
-
-					//reset the rank at max to reflect that it is counted from the bottom of the list.
-					currentResult.setRankAtMax(currentRankAtMax);
-				}
-				
-				//check to see if this rank is in the conversion map
-				if (ranks.containsRank(currentRankAtMax)) {
-					genekey = ranks.getGene(currentRankAtMax);
-				} else {
-					//if is possible that the gene associated with the max is not found in
-					//our gene 2 rank conversions because the rank by GSEA are off by 1 or two
-					//indexes (maybe a bug on their side).
-					//so depending on the NES score we need to fiddle with the rank to find the
-					//next protein that is the actual gene they are referring to
-
-					while (genekey == -1 && (currentRankAtMax <= largestRank && currentRankAtMax > 0)) {
-						if (NES < 0)
-							currentRankAtMax = currentRankAtMax + 1;
-						else
-							currentRankAtMax = currentRankAtMax - 1;
-						if (ranks.containsRank(currentRankAtMax))
-							genekey = ranks.getGene(currentRankAtMax);
-					}
-				}
-
-				if (genekey > -1) {
-					// what is the score for that gene
-					double scoreAtMax = ranks.getRank(genekey).getScore();
-					currentResult.setScoreAtMax(scoreAtMax);
-					// update the score At max in the EnrichmentResults as well
-				}
-			}
-		}
-	}
+//	private void updateRankAtMax(GSEAResult currentResult, Ranking ranks) {
+//		// Update the current geneset to reflect score at max
+//		if (ranks != null) {
+//			var allranks = ranks.getAllRanks();
+//			Integer largestRank = Collections.max(allranks);
+//
+//			// get the max at rank for this geneset
+//			int currentRankAtMax = currentResult.getRankAtMax();
+//
+//			if (currentRankAtMax != -1) {
+//				// check the ES score.  If it is negative we need to adjust the rank to count from the end of the list
+//				double NES = currentResult.getNES();
+//				int genekey = -1;
+//				
+//				// what gene corresponds to that rank
+//				if (NES < 0) {
+//					// it is possible that some of the proteins in the rank list won't be rank 2gene
+//					// conversion because some of the genes might not be in the genesets
+//					// so the size of the list can't be used to trace up from the bottom of the
+//					// ranks.  Instead we need to get the max rank used.
+//					currentRankAtMax = largestRank - currentRankAtMax;
+//
+//					//reset the rank at max to reflect that it is counted from the bottom of the list.
+//					currentResult.setRankAtMax(currentRankAtMax);
+//				}
+//				
+//				//check to see if this rank is in the conversion map
+//				if (ranks.containsRank(currentRankAtMax)) {
+//					genekey = ranks.getGene(currentRankAtMax);
+//				} else {
+//					//if is possible that the gene associated with the max is not found in
+//					//our gene 2 rank conversions because the rank by GSEA are off by 1 or two
+//					//indexes (maybe a bug on their side).
+//					//so depending on the NES score we need to fiddle with the rank to find the
+//					//next protein that is the actual gene they are referring to
+//
+//					while (genekey == -1 && (currentRankAtMax <= largestRank && currentRankAtMax > 0)) {
+//						if (NES < 0)
+//							currentRankAtMax = currentRankAtMax + 1;
+//						else
+//							currentRankAtMax = currentRankAtMax - 1;
+//						if (ranks.containsRank(currentRankAtMax))
+//							genekey = ranks.getGene(currentRankAtMax);
+//					}
+//				}
+//
+//				if (genekey > -1) {
+//					// what is the score for that gene
+//					double scoreAtMax = ranks.getRank(genekey).getScore();
+//					currentResult.setScoreAtMax(scoreAtMax);
+//					// update the score At max in the EnrichmentResults as well
+//				}
+//			}
+//		}
+//	}
 }

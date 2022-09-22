@@ -9,7 +9,7 @@ public class NodeDataDTO {
 	private String gsType;
 	private int gsSize;
 	private double pvalue;
-	private double fdrQvalue;
+	private double padj;
 	private double NES;
 	private double colouring;
 	private String mcodeClusterID;
@@ -67,13 +67,13 @@ public class NodeDataDTO {
 		this.pvalue = pvalue;
 	}
 
-	@JsonProperty("fdr_qvalue")
-	public double getFdrQvalue() {
-		return fdrQvalue;
+	@JsonProperty("padj")
+	public double getPadj() {
+		return padj;
 	}
 
-	public void setFdrQvalue(double fdrQvalue) {
-		this.fdrQvalue = fdrQvalue;
+	public void setPadj(double padj) {
+		this.padj = padj;
 	}
 
 	@JsonProperty("NES")

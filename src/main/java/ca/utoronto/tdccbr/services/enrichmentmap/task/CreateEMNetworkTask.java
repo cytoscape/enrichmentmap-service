@@ -9,9 +9,7 @@ import java.util.stream.Collectors;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.Columns;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EMDataSet;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentMap;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentResult;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.GSEAResult;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.GenericResult;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.FGSEAResult;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.GenesetSimilarity;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.SimilarityKey;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyEdge;
@@ -109,11 +107,15 @@ public class CreateEMNetworkTask implements Task {
 				var enrichmentResults = ds.getEnrichments().getEnrichments();
 				var result = enrichmentResults.get(gsName);
 				
-				// if result is null it will fail both instanceof checks
-				if (result instanceof GSEAResult)
-					setGSEAResultNodeAttributes(row, ds, (GSEAResult) result);
-				else if (result instanceof GenericResult)
-					setGenericResultNodeAttributes(row, ds, (GenericResult) result);
+//				// if result is null it will fail both instanceof checks
+//				if (result instanceof GSEAResult)
+//					setGSEAResultNodeAttributes(row, ds, (GSEAResult) result);
+//				else if (result instanceof GenericResult)
+//					setGenericResultNodeAttributes(row, ds, (GenericResult) result);
+				
+				if(result instanceof FGSEAResult fgseaResult) {
+					setFGSEAResultNodeAttributes(row, ds, fgseaResult);
+				}
 			}
 		}
 		
@@ -212,39 +214,46 @@ public class CreateEMNetworkTask implements Task {
 		return table;
 	}
 	
-	private void setGenericResultNodeAttributes(CyRow row, EMDataSet dataset, GenericResult result) {
+//	private void setGenericResultNodeAttributes(CyRow row, EMDataSet dataset, GenericResult result) {
+//		Columns.NODE_PVALUE.set(row, prefix, dataset, result.getPvalue());
+//		Columns.NODE_FDR_QVALUE.set(row, prefix, dataset, result.getFdrqvalue());
+//		Columns.NODE_NES.set(row, prefix, dataset, result.getNES());
+//		Columns.NODE_COLOURING.set(row, prefix, dataset, getColorScore(result));
+//	}
+	
+	private void setFGSEAResultNodeAttributes(CyRow row, EMDataSet dataset, FGSEAResult result) {
 		Columns.NODE_PVALUE.set(row, prefix, dataset, result.getPvalue());
-		Columns.NODE_FDR_QVALUE.set(row, prefix, dataset, result.getFdrqvalue());
+		Columns.NODE_FDR_QVALUE.set(row, prefix, dataset, result.getPadj());
 		Columns.NODE_NES.set(row, prefix, dataset, result.getNES());
-		Columns.NODE_COLOURING.set(row, prefix, dataset, getColorScore(result));
+//		Columns.NODE_COLOURING.set(row, prefix, dataset, getColorScore(result));
 	}
 	
-	private void setGSEAResultNodeAttributes(CyRow row, EMDataSet dataset, GSEAResult result) {
-		Columns.NODE_PVALUE.set(row, prefix, dataset, result.getPvalue());
-		Columns.NODE_FDR_QVALUE.set(row, prefix, dataset, result.getFdrqvalue());
-		Columns.NODE_FWER_QVALUE.set(row, prefix, dataset, result.getFwerqvalue());
-		Columns.NODE_ES.set(row, prefix, dataset, result.getES());
-		Columns.NODE_NES.set(row, prefix, dataset, result.getNES());
-		Columns.NODE_COLOURING.set(row, prefix, dataset, getColorScore(result));
-		
-//		var params = map.getParams();
-//		params.addPValueColumnName(Columns.NODE_PVALUE.with(prefix, dataset));
-	}
+//	private void setGSEAResultNodeAttributes(CyRow row, EMDataSet dataset, GSEAResult result) {
+//		Columns.NODE_PVALUE.set(row, prefix, dataset, result.getPvalue());
+//		Columns.NODE_FDR_QVALUE.set(row, prefix, dataset, result.getFdrqvalue());
+//		Columns.NODE_FWER_QVALUE.set(row, prefix, dataset, result.getFwerqvalue());
+//		Columns.NODE_ES.set(row, prefix, dataset, result.getES());
+//		Columns.NODE_NES.set(row, prefix, dataset, result.getNES());
+//		Columns.NODE_COLOURING.set(row, prefix, dataset, getColorScore(result));
+//		
+////		var params = map.getParams();
+////		params.addPValueColumnName(Columns.NODE_PVALUE.with(prefix, dataset));
+//	}
 	
-	private static double getColorScore(EnrichmentResult result) {
-		if (result == null)
-			return 0.0;
-		
-		double nes;
-		
-		if (result instanceof GSEAResult)
-			nes = ((GSEAResult)result).getNES();
-		else
-			nes = ((GenericResult)result).getNES();
-			
-		if (nes >= 0)
-			return 1 - result.getPvalue();
-		else
-			return (-1) * (1 - result.getPvalue());
-	}
+//	private static double getColorScore(EnrichmentResult result) {
+//		if (result == null)
+//			return 0.0;
+//		
+//		double nes;
+//		
+//		if (result instanceof GSEAResult)
+//			nes = ((GSEAResult)result).getNES();
+//		else
+//			nes = ((GenericResult)result).getNES();
+//			
+//		if (nes >= 0)
+//			return 1 - result.getPvalue();
+//		else
+//			return (-1) * (1 - result.getPvalue());
+//	}
 }

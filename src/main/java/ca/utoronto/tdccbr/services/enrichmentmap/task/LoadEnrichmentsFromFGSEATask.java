@@ -1,7 +1,7 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.task;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EMDataSet;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.GenericResult;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.FGSEAResult;
 
 public class LoadEnrichmentsFromFGSEATask implements Task {
 
@@ -21,12 +21,13 @@ public class LoadEnrichmentsFromFGSEATask implements Task {
 			var name = er.getPathway();
 			var description = name;
 			var pvalue = er.getPval();
-			var qvalue = 1.0;
+			var padj = er.getPadj();
+			var es = er.getES();
 			var nes = er.getNES();
 	
 			// TODO make sure the gene set exists
 			int gsSize = genesets.get(name).getGenes().size();
-			var result = new GenericResult(name, description, pvalue, gsSize, qvalue, nes);
+			var result = new FGSEAResult(name, description, pvalue, gsSize, padj, es, nes);
 			enrichments.getEnrichments().put(name, result);
 		}
 	}
