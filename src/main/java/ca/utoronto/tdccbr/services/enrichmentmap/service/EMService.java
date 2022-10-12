@@ -33,6 +33,7 @@ import ca.utoronto.tdccbr.services.enrichmentmap.task.LoadEnrichmentsFromFGSEATa
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ModelCleanupTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.Task;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.ClusterLabelTask;
+import ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.SummaryNetworkTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEAnalyzeTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEUtil;
 import ca.utoronto.tdccbr.services.enrichmentmap.util.TaskPipe;
@@ -91,17 +92,22 @@ public class EMService {
 		var clusterLabelTask = new ClusterLabelTask(CLUSTER_LABEL_COLUMN, CLUSTER_ID_COLUMN, networkPipe.out());
 		tasks.add(clusterLabelTask);
 		
+		var summaryNetworkTask = new SummaryNetworkTask(networkPipe.out(), CLUSTER_ID_COLUMN, true);
+		tasks.add(summaryNetworkTask);
 		
 		runTasks(tasks);
 		
 		
 		var network = netTask.getNetwork();
-		var netDto = createNetworkDTO(network);
+		var netDTO = createNetworkDTO(network);
 		
 		var clusterLabels = clusterLabelTask.getClusterLabels();
 		var clusterLabelsDTO = createClusterLabelsDTO(clusterLabels);
 		
-		return new ResultDTO(em.getParams(), netDto, clusterLabelsDTO);
+		var summaryNet = summaryNetworkTask.getSummaryNetwork();
+		var summaryNetDTO = createNetworkDTO(summaryNet);
+		
+		return new ResultDTO(em.getParams(), clusterLabelsDTO, netDTO, summaryNetDTO);
 	}
 	
 	
@@ -173,8 +179,14 @@ public class EMService {
 	}
 	
 	private static void copyAttributes(CyRow row, EdgeDataDTO dto) {
-		dto.setSimilarityCoefficient(EDGE_SIMILARITY_COEFF.get(row, NAMESPACE_PREFIX));
-		dto.setOverlapSize(EDGE_OVERLAP_SIZE.get(row, NAMESPACE_PREFIX));
+		Double similarityCoefficient = EDGE_SIMILARITY_COEFF.get(row, NAMESPACE_PREFIX);
+		if(similarityCoefficient != null)
+			dto.setSimilarityCoefficient(similarityCoefficient);
+		
+		Integer overlapSize = EDGE_OVERLAP_SIZE.get(row, NAMESPACE_PREFIX);
+		if(overlapSize != null)
+			dto.setOverlapSize(overlapSize);
+		
 		// NOTE: Not sending the "Data Set" attribute, because this service supports only one dataset
 	}
 }
