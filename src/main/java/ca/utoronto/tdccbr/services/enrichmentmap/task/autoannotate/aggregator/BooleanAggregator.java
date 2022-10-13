@@ -3,7 +3,7 @@ package ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.aggregator;
 import java.util.List;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyColumn;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyIdentifiable;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
 
 public class BooleanAggregator implements Aggregator<Boolean> {
@@ -24,7 +24,7 @@ public class BooleanAggregator implements Aggregator<Boolean> {
 	}
 
 	@Override
-	public Boolean aggregate(CyTable table, List<CyNode> nodes, CyColumn column) {
+	public Boolean aggregate(CyTable table, List<? extends CyIdentifiable> eles, CyColumn column) {
 		if (op == Operator.NONE)
 			return null;
 
@@ -33,8 +33,8 @@ public class BooleanAggregator implements Aggregator<Boolean> {
 		boolean first = true;
 
 		// Loop processing
-		for (CyNode node : nodes) {
-			Boolean v = table.getRow(node.getID()).get(column.getName(), Boolean.class);
+		for (var ele : eles) {
+			Boolean v = table.getRow(ele.getID()).get(column.getName(), Boolean.class);
 			if (v == null)
 				continue;
 			boolean value = v.booleanValue();

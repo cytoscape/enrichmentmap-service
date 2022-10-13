@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyColumn;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyIdentifiable;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
 
 public class StringListAggregator implements Aggregator<List<String>> {
@@ -33,7 +33,7 @@ public class StringListAggregator implements Aggregator<List<String>> {
 
 	@Override
 	@SuppressWarnings("incomplete-switch")
-	public List<String> aggregate(CyTable table, List<CyNode> nodes, CyColumn column) {
+	public List<String> aggregate(CyTable table, List<? extends CyIdentifiable> eles, CyColumn column) {
 		Class<?> listType = column.getListElementType();
 		List<String> agg = new ArrayList<String>();
 		Set<String> aggset = new HashSet<String>();
@@ -47,8 +47,8 @@ public class StringListAggregator implements Aggregator<List<String>> {
 		// Initialization
 
 		// Loop processing
-		for (CyNode node : nodes) {
-			List<?> list = table.getRow(node.getID()).getList(column.getName(), listType);
+		for (var ele : eles) {
+			List<?> list = table.getRow(ele.getID()).getList(column.getName(), listType);
 			if (list == null)
 				continue;
 			for (Object obj : list) {

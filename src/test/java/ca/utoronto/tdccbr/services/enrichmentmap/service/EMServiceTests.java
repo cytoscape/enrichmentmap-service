@@ -88,6 +88,9 @@ public class EMServiceTests {
                 .andReturn();
 
 		var s = mvcRes.getResponse().getContentAsString();
+		
+		System.out.println(s);
+		
 		var res = objectMapper.readValue(s, ResultDTO.class);
 		
 		// Check the Response

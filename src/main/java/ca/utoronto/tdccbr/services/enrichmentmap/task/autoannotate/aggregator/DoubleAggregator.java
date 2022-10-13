@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyColumn;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyIdentifiable;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
 
 public class DoubleAggregator implements Aggregator<Double> {
@@ -52,7 +52,7 @@ public class DoubleAggregator implements Aggregator<Double> {
 
 	@Override
 	@SuppressWarnings("incomplete-switch")
-	public Double aggregate(CyTable table, List<CyNode> nodes, CyColumn column) {
+	public Double aggregate(CyTable table, List<? extends CyIdentifiable> eles, CyColumn column) {
 		double aggregation = 0.0;
 		int count = 0;
 		List<Double> valueList = null;
@@ -74,8 +74,8 @@ public class DoubleAggregator implements Aggregator<Double> {
 		}
 
 		// Loop processing
-		for (CyNode node : nodes) {
-			Double v = table.getRow(node.getID()).get(column.getName(), Double.class);
+		for (var ele : eles) {
+			Double v = table.getRow(ele.getID()).get(column.getName(), Double.class);
 			if (v == null)
 				continue;
 			double value = v.doubleValue();

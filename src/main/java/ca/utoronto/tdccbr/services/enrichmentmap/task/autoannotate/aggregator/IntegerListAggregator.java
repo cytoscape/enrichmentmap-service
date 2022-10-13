@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyColumn;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyIdentifiable;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
 
 public class IntegerListAggregator implements Aggregator<List<Integer>> {
@@ -60,7 +60,7 @@ public class IntegerListAggregator implements Aggregator<List<Integer>> {
 
 	@Override
 	@SuppressWarnings("incomplete-switch")
-	public List<Integer> aggregate(CyTable table, List<CyNode> nodes, CyColumn column) {
+	public List<Integer> aggregate(CyTable table, List<? extends CyIdentifiable> eles, CyColumn column) {
 		Class<?> listType = column.getListElementType();
 		List<Integer> agg = new ArrayList<Integer>();
 		List<List<Integer>> aggMed = new ArrayList<>();
@@ -76,8 +76,8 @@ public class IntegerListAggregator implements Aggregator<List<Integer>> {
 
 		// Loop processing
 		int nodeCount = 0;
-		for (CyNode node : nodes) {
-			List<?> list = table.getRow(node.getID()).getList(column.getName(), listType);
+		for (var ele : eles) {
+			List<?> list = table.getRow(ele.getID()).getList(column.getName(), listType);
 			if (list == null)
 				continue;
 			int index = 0;

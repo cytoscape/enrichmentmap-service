@@ -165,12 +165,10 @@ public class EMService {
 	
 	private static void copyAttributes(CyRow row, NodeDataDTO dto) {
 		dto.setName(NODE_NAME.get(row, NAMESPACE_PREFIX));
-//		dto.setGsType(NODE_GS_TYPE.get(row, NAMESPACE_PREFIX));
 		dto.setGsSize(NODE_GS_SIZE.get(row, NAMESPACE_PREFIX));
 		dto.setPvalue(NODE_PVALUE.get(row, NAMESPACE_PREFIX));
 		dto.setPadj(NODE_FDR_QVALUE.get(row, NAMESPACE_PREFIX));
 		dto.setNES(NODE_NES.get(row, NAMESPACE_PREFIX));
-//		dto.setColouring(NODE_COLOURING.get(row, NAMESPACE_PREFIX));
 		
 		var mcodeClusterIds = row.getList(MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, MCODEAnalyzeTask.DEF_RESULT_ID), String.class);
 		if(mcodeClusterIds != null && !mcodeClusterIds.isEmpty()) {

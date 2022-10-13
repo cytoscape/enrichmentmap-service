@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyColumn;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyIdentifiable;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
 
 public class LongListAggregator implements Aggregator<List<Long>> {
@@ -59,7 +59,7 @@ public class LongListAggregator implements Aggregator<List<Long>> {
 
 	@Override
 	@SuppressWarnings("incomplete-switch")
-	public List<Long> aggregate(CyTable table, List<CyNode> nodes, CyColumn column) {
+	public List<Long> aggregate(CyTable table, List<? extends CyIdentifiable> eles, CyColumn column) {
 		Class<?> listType = column.getListElementType();
 		List<Long> agg = new ArrayList<Long>();
 		List<List<Long>> aggMed = new ArrayList<>();
@@ -75,8 +75,8 @@ public class LongListAggregator implements Aggregator<List<Long>> {
 
 		// Loop processing
 		long nodeCount = 0;
-		for (CyNode node : nodes) {
-			List<?> list = table.getRow(node.getID()).getList(column.getName(), listType);
+		for (var ele : eles) {
+			List<?> list = table.getRow(ele.getID()).getList(column.getName(), listType);
 			if (list == null)
 				continue;
 			int index = 0;

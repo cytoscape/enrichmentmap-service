@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyColumn;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyNode;
+import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyIdentifiable;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.network.CyTable;
 
 public class StringAggregator implements Aggregator<String> {
@@ -29,7 +29,7 @@ public class StringAggregator implements Aggregator<String> {
 
 	@Override
 	@SuppressWarnings("incomplete-switch")
-	public String aggregate(CyTable table, List<CyNode> nodes, CyColumn column) {
+	public String aggregate(CyTable table, List<? extends CyIdentifiable> eles, CyColumn column) {
 		String aggregation = null;
 		Map<String, Integer> histo = null;
 		Set<String> unique = null;
@@ -40,8 +40,8 @@ public class StringAggregator implements Aggregator<String> {
 		// Initialization
 
 		// Loop processing
-		for (CyNode node : nodes) {
-			String value = table.getRow(node.getID()).get(column.getName(), String.class);
+		for (var ele : eles) {
+			String value = table.getRow(ele.getID()).get(column.getName(), String.class);
 			if (value == null)
 				continue;
 
