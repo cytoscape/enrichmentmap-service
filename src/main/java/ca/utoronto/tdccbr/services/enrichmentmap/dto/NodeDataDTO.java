@@ -11,7 +11,6 @@ public class NodeDataDTO {
 	private double pvalue;
 	private double padj;
 	private double NES;
-	private double colouring;
 	private String mcodeClusterID;
 	
 	
@@ -83,14 +82,6 @@ public class NodeDataDTO {
 
 	public void setNES(double nes) {
 		NES = nes;
-	}
-
-	public double getColouring() {
-		return colouring;
-	}
-
-	public void setColouring(double colouring) {
-		this.colouring = colouring;
 	}
 
 	@JsonProperty("mcode_cluster_id")
