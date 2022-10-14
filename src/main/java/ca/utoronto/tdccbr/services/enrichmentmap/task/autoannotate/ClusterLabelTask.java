@@ -15,14 +15,16 @@ public class ClusterLabelTask implements Task {
 	private final Supplier<CyNetwork> networkSupplier;
 	private final String labelColumn;
 	private final String clusterIdColumn;
-
+	private final ClusterBoostedOptions options;
 	private Map<String,String> taskResults;
 	
 	
-	public ClusterLabelTask(String labelColumn, String clusterIdColumn, Supplier<CyNetwork> networkSupplier) {
+	
+	public ClusterLabelTask(Supplier<CyNetwork> networkSupplier, String labelColumn, String clusterIdColumn, int maxWords) {
 		this.labelColumn = labelColumn;
 		this.clusterIdColumn = clusterIdColumn;
 		this.networkSupplier = networkSupplier;
+		this.options = ClusterBoostedOptions.defaults().maxWords(maxWords);
 	}
 
 	
@@ -30,7 +32,6 @@ public class ClusterLabelTask implements Task {
 	public void run() {
 		var network = networkSupplier.get();
 		
-		var options = ClusterBoostedOptions.defaults();
 		var labelMaker = new ClusterBoostedLabelMaker(options);
 		
 		var results = new HashMap<String,String>();
@@ -63,6 +64,10 @@ public class ClusterLabelTask implements Task {
 	
 	public Map<String,String> getClusterLabels() {
 		return taskResults;
+	}
+	
+	public ClusterBoostedOptions getOptions() {
+		return options;
 	}
 
 }

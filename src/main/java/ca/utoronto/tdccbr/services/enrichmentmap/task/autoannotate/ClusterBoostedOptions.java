@@ -18,6 +18,7 @@ public class ClusterBoostedOptions {
 		this.minOccurs = minOccurs;
 	} 
 	
+	
 	public static ClusterBoostedOptions defaults() {
 		return new ClusterBoostedOptions(DEFAULT_MAX_WORDS, DEFAULT_CLUSTER_BONUS, DEFAULT_MIN_OCCURS);
 	}

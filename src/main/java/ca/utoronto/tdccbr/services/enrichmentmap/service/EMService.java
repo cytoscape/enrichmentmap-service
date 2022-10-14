@@ -32,6 +32,7 @@ import ca.utoronto.tdccbr.services.enrichmentmap.task.InitializeGenesetsOfIntere
 import ca.utoronto.tdccbr.services.enrichmentmap.task.LoadEnrichmentsFromFGSEATask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.ModelCleanupTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.Task;
+import ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.ClusterBoostedOptions;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.ClusterLabelTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.autoannotate.SummaryNetworkTask;
 import ca.utoronto.tdccbr.services.enrichmentmap.task.mcode.task.MCODEAnalyzeTask;
@@ -41,8 +42,8 @@ import ca.utoronto.tdccbr.services.enrichmentmap.util.TaskPipe;
 @Service
 public class EMService {
 	
-	private static final String CLUSTER_ID_COLUMN = MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, MCODEAnalyzeTask.DEF_RESULT_ID);
-	private static final String CLUSTER_LABEL_COLUMN = Columns.NODE_GS_DESCR.with(Columns.NAMESPACE_PREFIX);
+	private static final String CLUSTER_ID_COL = MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, MCODEAnalyzeTask.DEF_RESULT_ID);
+	private static final String CLUSTER_LABEL_COL = Columns.NODE_GS_DESCR.with(Columns.NAMESPACE_PREFIX);
 	
 	
 
@@ -89,10 +90,14 @@ public class EMService {
 		tasks.add(new MCODEAnalyzeTask(networkPipe.out()));
 		
 		// Run autoannotate/wordcloud to get labels for the clusters.
-		var clusterLabelTask = new ClusterLabelTask(CLUSTER_LABEL_COLUMN, CLUSTER_ID_COLUMN, networkPipe.out());
-		tasks.add(clusterLabelTask);
+		var labelTasks = List.of(
+			new ClusterLabelTask(networkPipe.out(), CLUSTER_LABEL_COL, CLUSTER_ID_COL, 3), 
+			new ClusterLabelTask(networkPipe.out(), CLUSTER_LABEL_COL, CLUSTER_ID_COL, 4), 
+			new ClusterLabelTask(networkPipe.out(), CLUSTER_LABEL_COL, CLUSTER_ID_COL, 5)
+		);
+		tasks.addAll(labelTasks);
 		
-		var summaryNetworkTask = new SummaryNetworkTask(networkPipe.out(), CLUSTER_ID_COLUMN, true);
+		var summaryNetworkTask = new SummaryNetworkTask(networkPipe.out(), CLUSTER_ID_COL, true);
 		tasks.add(summaryNetworkTask);
 		
 		runTasks(tasks);
@@ -101,15 +106,13 @@ public class EMService {
 		var network = netTask.getNetwork();
 		var netDTO = createNetworkDTO(network);
 		
-		var clusterLabels = clusterLabelTask.getClusterLabels();
-		var clusterLabelsDTO = createClusterLabelsDTO(clusterLabels);
-		
+		var labelsDTOs = createClusterLabelsDTOs(labelTasks);
+
 		var summaryNet = summaryNetworkTask.getSummaryNetwork();
 		var summaryNetDTO = createNetworkDTO(summaryNet);
 		
-		return new ResultDTO(em.getParams(), clusterLabelsDTO, netDTO, summaryNetDTO);
+		return new ResultDTO(em.getParams(), labelsDTOs, netDTO, summaryNetDTO);
 	}
-	
 	
 	
 	private static void runTasks(Collection<Task> tasks) {
@@ -153,14 +156,23 @@ public class EMService {
 		return netDto;
 	}
 	
-	private static ClusterLabelsDTO createClusterLabelsDTO(Map<String,String> labels) {
+	
+	private static List<ClusterLabelsDTO> createClusterLabelsDTOs(Collection<ClusterLabelTask> tasks) {
+		return tasks
+			.stream()
+			.map(t -> createClusterLabelsDTO(t.getClusterLabels(), t.getOptions()))
+			.toList();
+	}
+	
+	
+	private static ClusterLabelsDTO createClusterLabelsDTO(Map<String,String> labels, ClusterBoostedOptions options) {
 		List<LabelDTO> labelDTOs = new ArrayList<>(labels.size());
 		
 		labels.forEach((clusterId, label) -> {
 			labelDTOs.add(new LabelDTO(clusterId, label));
 		});
 		
-		return new ClusterLabelsDTO(labelDTOs);
+		return new ClusterLabelsDTO(labelDTOs, options.getMaxWords());
 	}
 	
 	private static void copyAttributes(CyRow row, NodeDataDTO dto) {

@@ -5,14 +5,16 @@ import java.util.List;
 
 public class ClusterLabelsDTO {
 	
+	private int maxWords;
 	private List<LabelDTO> labels;
-	
+
 
 	public ClusterLabelsDTO() {
 	}
 	
-	public ClusterLabelsDTO(List<LabelDTO> labels) {
+	public ClusterLabelsDTO(List<LabelDTO> labels, int maxWords) {
 		this.labels = labels;
+		this.maxWords = maxWords;
 	}
 	
 	public List<LabelDTO> getLabels() {
@@ -25,4 +27,12 @@ public class ClusterLabelsDTO {
 		this.labels = labels;
 	}
 
+	public int getMaxWords() {
+		return maxWords;
+	}
+
+	public void setMaxWords(int maxWords) {
+		this.maxWords = maxWords;
+	}
+	
 }

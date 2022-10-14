@@ -1,9 +1,11 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.dto;
 
+import java.util.List;
+
 public class ResultDTO {
 
 	private EMCreationParametersDTO parameters;
-	private ClusterLabelsDTO clusterLabels;
+	private List<ClusterLabelsDTO> clusterLabels;
 	private NetworkDTO network;
 	private NetworkDTO summaryNetwork;
 	
@@ -11,17 +13,13 @@ public class ResultDTO {
 		// Zero-argument constructor for the JavaBean standard...
 	}
 	
-	public ResultDTO(EMCreationParametersDTO parameters, ClusterLabelsDTO clusterLabels, NetworkDTO network, NetworkDTO summaryNetwork) {
+	public ResultDTO(EMCreationParametersDTO parameters, List<ClusterLabelsDTO> clusterLabels, NetworkDTO network, NetworkDTO summaryNetwork) {
 		this.parameters = parameters;
 		this.clusterLabels = clusterLabels;
 		this.network = network;
 		this.summaryNetwork = summaryNetwork;
 	}
 	
-	public ResultDTO(EMCreationParametersDTO parameters, ClusterLabelsDTO clusterLabels, NetworkDTO network) {
-		this(parameters, clusterLabels, network, null);
-	}
-
 	
 	public NetworkDTO getNetwork() {
 		return network;
@@ -47,11 +45,11 @@ public class ResultDTO {
 		this.parameters = parameters;
 	}
 
-	public ClusterLabelsDTO getClusterLabels() {
+	public List<ClusterLabelsDTO> getClusterLabels() {
 		return clusterLabels;
 	}
 
-	public void setClusterLabels(ClusterLabelsDTO clusterLabels) {
+	public void setClusterLabels(List<ClusterLabelsDTO> clusterLabels) {
 		this.clusterLabels = clusterLabels;
 	}
 }
