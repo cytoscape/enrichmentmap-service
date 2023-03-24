@@ -75,6 +75,18 @@ public class EMServiceTests {
 		var s = mvcRes.getResponse().getContentAsString();
 		assertEquals("OK", s);
 	}
+	
+
+	@Test
+	public void testDeserializeNES() {
+		var res0 = fgseaResults.get(0);
+		assertEquals("ANATOMICAL STRUCTURE DEVELOPMENT%GOBP%GO:0048856", res0.getPathway());
+		assertEquals(22, res0.getSize());
+		assertEquals(0.1328, res0.getPval());
+		assertEquals(-0.2454, res0.getES());
+		assertEquals(-1.3288, res0.getNES());
+	}
+	
 
 	@Test
     public void testCreateEMNetwork() throws Exception {

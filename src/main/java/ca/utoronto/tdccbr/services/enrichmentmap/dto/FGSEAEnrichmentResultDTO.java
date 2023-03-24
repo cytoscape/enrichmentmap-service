@@ -2,6 +2,9 @@ package ca.utoronto.tdccbr.services.enrichmentmap.dto;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 public class FGSEAEnrichmentResultDTO {
 
 	private String pathway;
@@ -55,18 +58,22 @@ public class FGSEAEnrichmentResultDTO {
 		this.pval = pval;
 	}
 
+	@JsonGetter("ES")
 	public double getES() {
 		return ES;
 	}
 
+	@JsonSetter("ES")
 	public void setES(double es) {
 		ES = es;
 	}
 
+	@JsonGetter("NES")
 	public double getNES() {
 		return NES;
 	}
 
+	@JsonSetter("NES")
 	public void setNES(double nes) {
 		NES = nes;
 	}
