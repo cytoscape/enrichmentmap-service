@@ -113,7 +113,7 @@ public class EMServiceTests {
 		
 		// Check the EM Network
 		assertEquals(5, net.getElements().getNodes().size());
-		assertEquals(8, net.getElements().getEdges().size());
+		assertEquals(3, net.getElements().getEdges().size());
 		
 		// Check EM columns
 		// TODO

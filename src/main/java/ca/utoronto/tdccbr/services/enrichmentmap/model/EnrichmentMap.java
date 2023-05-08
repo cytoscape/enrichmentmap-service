@@ -1,5 +1,6 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.model;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,6 +50,8 @@ public class EnrichmentMap {
 	private boolean isLegacy;
 	private boolean isDistinctExpressionSets;
 	private boolean isCommonExpressionValues;
+	
+	private Color compoundEdgeColor;
 
 	private final Object lock = new Object();
 	
@@ -541,6 +544,14 @@ public class EnrichmentMap {
 	
 	public void setLegacy(boolean legacy) {
 		this.isLegacy = legacy;
+	}
+	
+	public Color getCompoundEdgeColor() {
+		return compoundEdgeColor;
+	}
+	
+	public void setCompoundEdgeColor(Color compoundEdgeColor) {
+		this.compoundEdgeColor = compoundEdgeColor;
 	}
 	
 	/**

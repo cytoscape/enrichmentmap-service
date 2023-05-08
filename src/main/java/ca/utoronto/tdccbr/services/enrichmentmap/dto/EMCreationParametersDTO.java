@@ -25,16 +25,15 @@ public class EMCreationParametersDTO implements EnrichmentResultFilterParams {
 	
 	// Node filtering (gene-sets)
 	private double pvalue = 1.0;
-	private double qvalue = 0.1;
+	private double qvalue = 0.05;
 	private boolean filterByExpressions = false;
 	
 	// Edge filtering (similarity)
-	private SimilarityMetric similarityMetric = SimilarityMetric.COMBINED;
-	private double similarityCutoff = 0.375;
-	private double combinedConstant = 0.5;
+	private SimilarityMetric similarityMetric = SimilarityMetric.JACCARD;
+	private double similarityCutoff = 0.25;
+	private double combinedConstant = 0.5; // only used with COMBINED
 	
-	private boolean fdr = false; // If true then q-value is used for filtering.
-	private int qvalueFilterMaxNodes = -1; // If > 0 then then number of gene sets is limited to this value before similarity is calculated.
+	private boolean fdr = true; // If true then q-value is used for filtering.
 	
 	private EdgeStrategy edgeStrategy = EdgeStrategy.AUTOMATIC;
 	private String enrichmentEdgeType = "Geneset_Overlap";
@@ -102,14 +101,6 @@ public class EMCreationParametersDTO implements EnrichmentResultFilterParams {
 		this.fdr = fdr;
 	}
 	
-	public int getQvalueFilterMaxNodes() {
-		return qvalueFilterMaxNodes;
-	}
-
-	public void setQvalueFilterMaxNodes(int qvalueFilterMaxNodes) {
-		this.qvalueFilterMaxNodes = qvalueFilterMaxNodes;
-	}
-
 	public EdgeStrategy getEdgeStrategy() {
 		return edgeStrategy;
 	}

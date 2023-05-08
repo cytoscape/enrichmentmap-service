@@ -1,12 +1,9 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.task;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EMDataSet;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.EnrichmentMap;
-import ca.utoronto.tdccbr.services.enrichmentmap.model.FGSEAResult;
 import ca.utoronto.tdccbr.services.enrichmentmap.model.SetOfGeneSets;
 
 /**
@@ -108,20 +105,6 @@ public class InitializeGenesetsOfInterestTask implements Task {
 						genesetsOfInterest.put(gsName, gs);
 					}
 				}
-			}
-			
-			// Limit size of resulting network
-			int max = map.getParams().getQvalueFilterMaxNodes();
-			if(max > 0) {
-				List<String> geneSetsSoFar = new ArrayList<>(genesetsOfInterest.keySet());
-				geneSetsSoFar.sort((gs1, gs2) -> {
-					var enr1 = (FGSEAResult) enrichmentResults.get(gs1);
-					var enr2 = (FGSEAResult) enrichmentResults.get(gs2);
-					return Double.compare(enr1.getPadj(), enr2.getPadj());
-				});
-				
-				var geneSetsToKeep = geneSetsSoFar.subList(0, Math.min(max, geneSetsSoFar.size()));
-				genesetsOfInterest.keySet().removeIf(gs -> !geneSetsToKeep.contains(gs));
 			}
 		}
 		
