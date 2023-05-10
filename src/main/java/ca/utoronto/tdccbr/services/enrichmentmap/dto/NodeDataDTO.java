@@ -1,11 +1,13 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NodeDataDTO {
 
 	private String id;
-	private String name;
+	private List<String> name;
 	private String gsType;
 	private int gsSize;
 	private double pvalue;
@@ -32,11 +34,11 @@ public class NodeDataDTO {
 		this.id = id;
 	}
 
-	public String getName() {
+	public List<String> getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(List<String> name) {
 		this.name = name;
 	}
 

@@ -1,6 +1,7 @@
 package ca.utoronto.tdccbr.services.enrichmentmap.task;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -73,7 +74,7 @@ public class CreateEMNetworkTask implements Task {
 			
 			// Set common attributes
 			var row = network.getRow(node);
-			Columns.NODE_NAME.set(row, prefix, null, gsName); // MKTODO why is this column needed?
+			Columns.NODE_NAME.set(row, prefix, null, List.of(gsName));
 			
 			var gs = map.getGeneSet(gsName);
 			
