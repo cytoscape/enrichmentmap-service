@@ -79,7 +79,7 @@ public class CreateEMNetworkTask implements Task {
 			var gs = map.getGeneSet(gsName);
 			
 			if (gs != null) {
-				Columns.NODE_GS_DESCR.set(row, prefix, null, gs.getLabel());
+				Columns.NODE_GS_DESCR.set(row, prefix, null, List.of(gs.getDescription()));
 				
 //				if (map.getParams().isParseBaderlabGeneSets()) {
 //					if (gs.getSource().isPresent())

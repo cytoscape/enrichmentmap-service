@@ -181,6 +181,7 @@ public class EMService {
 		dto.setPvalue(NODE_PVALUE.get(row, NAMESPACE_PREFIX));
 		dto.setPadj(NODE_FDR_QVALUE.get(row, NAMESPACE_PREFIX));
 		dto.setNES(NODE_NES.get(row, NAMESPACE_PREFIX));
+		dto.setDescription(NODE_GS_DESCR.get(row, NAMESPACE_PREFIX));
 		
 		var mcodeClusterIds = row.getList(MCODEUtil.columnName(MCODEUtil.CLUSTERS_ATTR, MCODEAnalyzeTask.DEF_RESULT_ID), String.class);
 		if(mcodeClusterIds != null && !mcodeClusterIds.isEmpty()) {

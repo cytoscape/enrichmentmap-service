@@ -135,7 +135,9 @@ public class CloudInfo {
 	 */
 	private Collection<String> processNodeString(String nodeValue) {
 		WordDelimiters delimeters = cloud.getNetworkParams().getDelimeters();
-		Collection<String> words = delimeters.split(nodeValue.toLowerCase());
+		
+//		Collection<String> words = delimeters.split(nodeValue.toLowerCase());
+		Collection<String> words = delimeters.split(nodeValue);
 		
 //		if(cloud.getNetworkParams().getIsStemming()) {
 //			Set<String> stemmedWords = new HashSet<String>();

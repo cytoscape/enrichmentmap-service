@@ -18,7 +18,7 @@ public interface Columns {
 	// ---[ EM Attributes ]---------------------------------------------------------------------------------------------
 	// Common attributes that apply to the entire network
 	public static final ColumnListDescriptor<String> NODE_NAME = new ColumnListDescriptor<>("Name", String.class);
-	public static final ColumnDescriptor<String> NODE_GS_DESCR = new ColumnDescriptor<>("GS_DESCR", String.class);
+	public static final ColumnListDescriptor<String> NODE_GS_DESCR = new ColumnListDescriptor<>("GS_DESCR", String.class);
 	public static final ColumnDescriptor<String> NODE_DAVID_CATEGORY = new ColumnDescriptor<>("david_category", String.class);
 	public static final ColumnDescriptor<String> NODE_DATASOURCE = new ColumnDescriptor<>("GS_datasource", String.class);
 	public static final ColumnDescriptor<String> NODE_DATASOURCEID = new ColumnDescriptor<>("GS_datasource_id", String.class);

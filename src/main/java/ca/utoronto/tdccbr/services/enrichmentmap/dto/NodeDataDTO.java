@@ -8,6 +8,7 @@ public class NodeDataDTO {
 
 	private String id;
 	private List<String> name;
+	private List<String> description;
 	private String gsType;
 	private int gsSize;
 	private double pvalue;
@@ -40,6 +41,14 @@ public class NodeDataDTO {
 
 	public void setName(List<String> name) {
 		this.name = name;
+	}
+	
+	public List<String> getDescription() {
+		return description;
+	}
+
+	public void setDescription(List<String> description) {
+		this.description = description;
 	}
 
 	@JsonProperty("gs_type")
