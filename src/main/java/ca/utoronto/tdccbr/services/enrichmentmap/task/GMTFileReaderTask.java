@@ -21,7 +21,8 @@ import ca.utoronto.tdccbr.services.enrichmentmap.model.SetOfGeneSets;
  */
 public class GMTFileReaderTask implements Task {
 	
-	public static final String DATASET_NAME_1 = "/Human_GOBP_AllPathways_no_GO_iea_June_01_2022_symbol.gmt";
+//	public static final String DATASET_NAME_1 = "/Human_GOBP_AllPathways_no_GO_iea_June_01_2022_symbol.gmt";
+	public static final String DATASET_NAME_1 = "/Human_GOBP_AllPathways_noPFOCR_no_GO_iea_May_01_2024_symbol.gmt";
 	
 
 	private final EnrichmentMap map;
