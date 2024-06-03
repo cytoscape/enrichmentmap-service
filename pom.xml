@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ca.utoronto.tdccbr.services</groupId>
 	<artifactId>enrichmentmap-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>enrichmentmap-service</name>
 	<description>EnrichmentMap microservice by Bader Lab</description>
 	
