@@ -46,8 +46,10 @@ public class EMService {
 	private static final String CLUSTER_LABEL_COL = Columns.NODE_GS_DESCR.with(Columns.NAMESPACE_PREFIX);
 	
 	
-
 	public ResultDTO createNetwork(RequestDTO request) {
+		final var gmtFile = GMTFileReaderTask.DATASET_NAME_2;
+		final var gmtPath = "/" + gmtFile;
+		
 		var params = request.getParameters();
 		var dsParams = request.getDataSets();
 		var em = new EnrichmentMap(params);
@@ -62,7 +64,7 @@ public class EMService {
 			// Create Data Set and load the enrichments from the input data
 			var ds = em.createDataSet(dsName, fgseaRes);
 			
-			tasks.add(new GMTFileReaderTask(ds, GMTFileReaderTask.DATASET_NAME_1));
+			tasks.add(new GMTFileReaderTask(ds, gmtPath));
 			
 			tasks.add(new LoadEnrichmentsFromFGSEATask(ds));
 		}
@@ -111,7 +113,7 @@ public class EMService {
 		var summaryNet = summaryNetworkTask.getSummaryNetwork();
 		var summaryNetDTO = createNetworkDTO(summaryNet);
 		
-		return new ResultDTO(em.getParams(), labelsDTOs, netDTO, summaryNetDTO);
+		return new ResultDTO(em.getParams(), labelsDTOs, netDTO, summaryNetDTO, gmtFile);
 	}
 	
 	

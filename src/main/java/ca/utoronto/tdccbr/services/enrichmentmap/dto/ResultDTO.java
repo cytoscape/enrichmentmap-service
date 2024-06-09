@@ -8,16 +8,18 @@ public class ResultDTO {
 	private List<ClusterLabelsDTO> clusterLabels;
 	private NetworkDTO network;
 	private NetworkDTO summaryNetwork;
+	private String gmtFile;
 	
 	public ResultDTO() {
 		// Zero-argument constructor for the JavaBean standard...
 	}
 	
-	public ResultDTO(EMCreationParametersDTO parameters, List<ClusterLabelsDTO> clusterLabels, NetworkDTO network, NetworkDTO summaryNetwork) {
+	public ResultDTO(EMCreationParametersDTO parameters, List<ClusterLabelsDTO> clusterLabels, NetworkDTO network, NetworkDTO summaryNetwork, String gmtFile) {
 		this.parameters = parameters;
 		this.clusterLabels = clusterLabels;
 		this.network = network;
 		this.summaryNetwork = summaryNetwork;
+		this.gmtFile = gmtFile;
 	}
 	
 	
@@ -51,5 +53,13 @@ public class ResultDTO {
 
 	public void setClusterLabels(List<ClusterLabelsDTO> clusterLabels) {
 		this.clusterLabels = clusterLabels;
+	}
+	
+	public String getGmtFile() {
+		return gmtFile;
+	}
+
+	public void setGmtFile(String gmtFile) {
+		this.gmtFile = gmtFile;
 	}
 }
