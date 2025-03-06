@@ -102,18 +102,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>com.adelean</groupId>
-			<artifactId>inject-resources-core</artifactId>
-			<version>0.1.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adelean</groupId>
-			<artifactId>inject-resources-junit-jupiter</artifactId>
-			<version>0.1.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>

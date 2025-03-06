@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,8 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.adelean.inject.resources.junit.jupiter.GivenTextResource;
-import com.adelean.inject.resources.junit.jupiter.TestWithResources;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,13 +34,9 @@ import ca.utoronto.tdccbr.services.enrichmentmap.dto.ResultDTO;
 @ContextConfiguration(classes = { EMController.class, EMService.class })
 @AutoConfigureMockMvc
 @WebMvcTest
-@TestWithResources
 public class EMServiceTests {
 
-	private static final String FGSEA_FILENAME = "fgsea-results.json";
-	
-	@GivenTextResource(FGSEA_FILENAME)
-	String fgseaResJson;
+	private static final String FGSEA_FILENAME = "src/test/resources/fgsea-results.json";
 	
 	private List<FGSEAEnrichmentResultDTO> fgseaResults;
 	
@@ -58,6 +54,7 @@ public class EMServiceTests {
     public void setup() throws Exception {
         JacksonTester.initFields(this, objectMapper);
         
+        String fgseaResJson = Files.readString(Path.of(FGSEA_FILENAME));
 		fgseaResults = objectMapper.readValue(fgseaResJson, new TypeReference<List<FGSEAEnrichmentResultDTO>>() {});
         
         dsParams = new DataSetParametersDTO(FGSEA_FILENAME, fgseaResults);
